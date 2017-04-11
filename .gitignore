@@ -1,0 +1,11 @@
+.DS_Store
+Thumbs.db
+wp-cli.local.yml
+node_modules/
+*.zip
+*.tar.gz
+.idea
+vendor
+!vendor/autoload.php
+!vendor/composer/*
+!vendor/php-jwt
