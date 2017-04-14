@@ -14,12 +14,15 @@ if ( ! $_tests_dir ) {
 require_once $_tests_dir . '/includes/functions.php';
 
 /**
- * Manually load the plugin being tested.
+ * Load required plugins
  */
 function _manually_load_plugin() {
 	require dirname( dirname( __FILE__ ) ) . '/wp-graphql-jwt-authentication.php';
+	require_once dirname( dirname( __FILE__, 2 ) ) . '/wp-graphql-dev/wp-graphql.php';
 }
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
+
+define( 'GRAPHQL_JWT_AUTH_SECRET_KEY', 'SOME_UNIQUE_KEY' );
 
 // Start up the WP testing environment.
 require $_tests_dir . '/includes/bootstrap.php';

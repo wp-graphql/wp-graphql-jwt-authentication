@@ -16,7 +16,7 @@
     },
     "autoload": {
         "psr-4": {
-            "WPGraphQL_JWT_Authentication\\": "src"
+            "WPGraphQL\\JWT_Authentication\\": "src"
         }
     }
 }
