@@ -1,5 +1,18 @@
 # WPGraphQL JWT Authentication
 
+---
+
+# NOTE: 
+THIS PLUGIN IS LONGER RECOMMENDED OR SUPPORTED FOR AUTH WITH WPGRAPHQL. AUTH IS RECOMMENDED TO HAPPEN OUTSIDE OF GRAPHQL, NOT FROM WITHIN. SEE EXISTING AUTH SOLUTIONS FOR WORDPRESS, SUCH AS: 
+
+https://github.com/WP-API/OAuth1
+https://github.com/WP-API/basic-auth
+
+NOTE: Even though these plugins are listed for use with the WP-API, they work fine with WPGraphQL, as the authorization mechanism happens before the GraphQL requests are executed, very much like how these plugins work with the WP REST API.
+
+---
+
+
 This plugin extends the <a href="https://github.com/wp-graphql/wp-graphql" target="_blank">WPGraphQL</a> plugin to provide authentication using JWT (JSON Web Tokens)
 
 JSON Web Tokens are an open, industry standard [RFC 7519](https://tools.ietf.org/html/rfc7519) method for representing claims securely between two parties.
