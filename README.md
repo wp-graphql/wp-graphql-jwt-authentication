@@ -2,11 +2,11 @@
 
 ---
 
-# NOTE: 
+### NO LONGER SUPPORTED/RECOMMENDED: 
 THIS PLUGIN IS LONGER RECOMMENDED OR SUPPORTED FOR AUTH WITH WPGRAPHQL. AUTH IS RECOMMENDED TO HAPPEN OUTSIDE OF GRAPHQL, NOT FROM WITHIN. SEE EXISTING AUTH SOLUTIONS FOR WORDPRESS, SUCH AS: 
 
-https://github.com/WP-API/OAuth1
-https://github.com/WP-API/basic-auth
+* https://github.com/WP-API/OAuth1
+* https://github.com/WP-API/basic-auth
 
 NOTE: Even though these plugins are listed for use with the WP-API, they work fine with WPGraphQL, as the authorization mechanism happens before the GraphQL requests are executed, very much like how these plugins work with the WP REST API.
 
