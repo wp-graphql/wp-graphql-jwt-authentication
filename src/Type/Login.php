@@ -3,6 +3,7 @@ namespace WPGraphQL\JWT_Authentication\Type;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
+use WPGraphQL\Data\DataSource;
 use WPGraphQL\Type\WPObjectType;
 use WPGraphQL\Types;
 
@@ -66,15 +67,9 @@ class Login extends WPObjectType {
 						'type' => Types::user(),
 						'description' => __( 'The authenticated user', 'wp-graphql-jwt-authentication' ),
 						'resolve' => function( $auth, array $args, AppContext $context, ResolveInfo $info ) {
-
-							if ( ! empty( $auth['user_id'] ) ) {
-								$user = new \WP_User( absint( $auth['user_id'] ) );
-							}
-
-							return ! empty( $user ) ? $user : null;
-
+							return DataSource::resolve_user( $auth['user_id'] );
 						}
-					]
+					],
 				];
 
 				/**

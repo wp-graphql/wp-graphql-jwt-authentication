@@ -3,7 +3,7 @@ namespace WPGraphQL\JWT_Authentication;
 
 
 use Firebase\JWT\JWT;
-use WPGraphQL\JWT_Authentication;
+use GraphQL\Error\UserError;
 
 class Auth {
 
@@ -23,7 +23,7 @@ class Auth {
 		 * First thing, check the secret key if not exist return a error
 		 */
 		if ( ! Config::get_secret_key() ) {
-			throw new \Exception( __( 'JWT Auth is not configured correctly. Please contact a site administrator.', 'wp-graphql-jwt-authentication' ) );
+			throw new UserError( __( 'JWT Auth is not configured correctly. Please contact a site administrator.', 'wp-graphql-jwt-authentication' ) );
 		}
 
 		/**
@@ -36,7 +36,7 @@ class Auth {
 		 */
 		if ( is_wp_error( $user ) ) {
 			$error_code = ! empty( $user->get_error_code() ) ? $user->get_error_code() : 'invalid login';
-			throw new \Exception( esc_html( $error_code ) );
+			throw new UserError( esc_html( $error_code ) );
 		}
 
 		/**
@@ -112,6 +112,11 @@ class Auth {
 		$auth_data = apply_filters( 'graphql_jwt_auth_token_before_dispatch', $auth_data, $user );
 
 		/**
+		 * Log the user in
+		 */
+		wp_set_current_user( $user->data->ID );
+
+		/**
 		 * Let the user modify the data before send it back
 		 */
 		return ! empty( $auth_data ) ? $auth_data : $token;
@@ -155,37 +160,34 @@ class Auth {
 			 * @since 0.0.1
 			 */
 			if ( false === $auth ) {
-				throw new \Exception( __( 'Authorization header not found.', 'wp-graphql-jwt-authentication' ) );
+				//throw new UserError( __( 'Authorization header not found.', 'wp-graphql-jwt-authentication' ) );
 			}
 
-			/**
-			 * The HTTP_AUTHORIZATION is present verify the format
-			 * if the format is wrong return the user.
-			 */
-			list( $token ) = sscanf( $auth, 'Bearer %s' );
+			if ( $auth ) {
+				/**
+				 * The HTTP_AUTHORIZATION is present verify the format
+				 * if the format is wrong return the user.
+				 */
+				list( $token ) = sscanf( $auth, 'Bearer %s' );
+			}
 
-		}
-
-		/**
-		 * If there's still no $token, return an error
-		 *
-		 * @since 0.0.1
-		 */
-		if ( empty( $token ) ) {
-			throw new \Exception( __( 'Authorization header malformed', 'wp-graphql-jwt-authentication' ) );
 		}
 
 		/**
 		 * If there's no secret key, throw an error as there needs to be a secret key for Auth to work properly
 		 */
 		if ( ! Config::get_secret_key() ) {
-			throw new \Exception( __( 'JWT is not configured properly', 'wp-graphql-jwt-authentication' ) );
+			throw new UserError( __( 'JWT is not configured properly', 'wp-graphql-jwt-authentication' ) );
 		}
 
 		/**
 		 * Try to decode the token
 		 */
 		try {
+
+			if ( empty( $token ) ) {
+				return;
+			}
 
 			/**
 			 * Decode the token
@@ -196,18 +198,21 @@ class Auth {
 			 * The Token is decoded now validate the iss
 			 */
 			if ( get_bloginfo( 'url' ) !== $token->iss ) {
-				throw new \Exception( __( 'The iss do not match with this server', 'wp-graphql-jwt-authentication' ) );
+				//throw new UserError( __( 'The iss do not match with this server', 'wp-graphql-jwt-authentication' ) );
 			}
 			/**
 			 * So far so good, validate the user id in the token
 			 */
 			if ( ! isset( $token->data->user->id ) ) {
-				throw new \Exception( __( 'User ID not found in the token', 'wp-graphql-jwt-authentication' ) );
+				//throw new UserError( __( 'User ID not found in the token', 'wp-graphql-jwt-authentication' ) );
 			}
 
-		} catch ( Exception $error ) {
-			throw new \Exception( esc_html( $error->getMessage() ) );
+		} catch ( UserError $error ) {
+			//throw new UserError( esc_html( $error->getMessage() ) );
 		}
+
+		return $token;
+
 	}
 
 }

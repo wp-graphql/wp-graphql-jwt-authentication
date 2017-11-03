@@ -12,8 +12,8 @@ DB_HOST=${4-localhost}
 WP_VERSION=${5-latest}
 SKIP_DB_CREATE=${6-false}
 
-WP_TESTS_DIR=${WP_TESTS_DIR-/tmp/wordpress-tests-lib}
-WP_CORE_DIR=${WP_CORE_DIR-/tmp/wordpress/}
+WP_TESTS_DIR=${WP_TESTS_DIR-/tmp/wp-graphql-jwt-authentication/wordpress-tests-lib}
+WP_CORE_DIR=${WP_CORE_DIR-/tmp/wp-graphql-jwt-authentication/wordpress/}
 
 download() {
     if [ `which curl` ]; then
@@ -122,6 +122,12 @@ install_db() {
 	mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
 }
 
+install_wpgraphql() {
+	echo "Cloning WPGraphQL"
+	git clone https://github.com/wp-graphql/wp-graphql.git $WP_CORE_DIR/wp-content/plugins/wp-graphql
+}
+
 install_wp
 install_test_suite
 install_db
+install_wpgraphql

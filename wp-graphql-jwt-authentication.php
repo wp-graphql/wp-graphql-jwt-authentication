@@ -7,8 +7,9 @@
  * Author URI:      https://www.wpgraphql.com
  * Text Domain:     wp-graphql-jwt-authentication-jwt-authentication
  * Domain Path:     /languages
- * Version:         0.1.0
- * @package         JWT_Authentication
+ * Version:         0.2.0
+ *
+ * @package         WPGraphQL_JWT_Authentication
  */
 namespace WPGraphQL;
 
@@ -98,7 +99,7 @@ if ( ! class_exists( 'JWT_Authentication' ) ) :
 
 			// Plugin version.
 			if ( ! defined( 'WPGRAPHQL_JWT_AUTHENTICATION_VERSION' ) ) {
-				define( 'WPGRAPHQL_JWT_AUTHENTICATION_VERSION', '0.0.1' );
+				define( 'WPGRAPHQL_JWT_AUTHENTICATION_VERSION', '0.2.0' );
 			}
 
 			// Plugin Folder Path.

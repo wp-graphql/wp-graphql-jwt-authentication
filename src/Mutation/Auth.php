@@ -1,8 +1,9 @@
 <?php
 namespace WPGraphQL\JWT_Authentication\Mutation;
 
-use WPGraphQL\JWT_Authentication\Config;
+use GraphQL\Error\UserError;
 use WPGraphQL\JWT_Authentication\Type\Login;
+use WPGraphQL\Type\WPInputObjectType;
 
 class Auth {
 
@@ -16,20 +17,27 @@ class Auth {
 
 		$fields['login'] = [
 			'args' => [
-				'username' => [
-					'type' => \WPGraphQL\Types::string(),
-				],
-				'password' => [
-					'type' => \WPGraphQL\Types::string(),
-				],
+				'input' => [
+					'type' => new WPInputObjectType([
+						'name' => 'LoginInput',
+						'fields' => [
+							'username' => [
+								'type' => \WPGraphQL\Types::string(),
+							],
+							'password' => [
+								'type' => \WPGraphQL\Types::string(),
+							],
+						]
+					])
+				]
 			],
 			'type' => new Login(),
 			'resolve' => function( $source, array $args, \WPGraphQL\AppContext $context, \GraphQL\Type\Definition\ResolveInfo $info ) {
 
-				$token = \WPGraphQL\JWT_Authentication\Auth::generate_token( sanitize_user( $args['username'] ), trim( $args['password'] ) );
+				$token = \WPGraphQL\JWT_Authentication\Auth::generate_token( sanitize_user( $args['input']['username'] ), trim( $args['input']['password'] ) );
 
 				if ( is_wp_error( $token ) ) {
-					throw new \Exception( __( 'JWT is not configurated properly, please contact the admin', 'wp-graphql' ) );
+					throw new UserError( __( 'JWT is not configurated properly, please contact the admin', 'wp-graphql' ) );
 				}
 
 				return $token;
@@ -51,7 +59,7 @@ class Auth {
 				/**
 				 * Validate the token
 				 */
-				$token = Config::validate_token( $args['token'], true );
+				$token = \WPGraphQL\JWT_Authentication\Auth::validate_token( $args['token'] );
 
 				/**
 				 * If the token returns valid

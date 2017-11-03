@@ -1,6 +1,7 @@
 <?php
 namespace WPGraphQL\JWT_Authentication;
 
+use GraphQL\Error\UserError;
 use WPGraphQL\JWT_Authentication;
 use WPGraphQL\Router;
 
@@ -64,9 +65,10 @@ class Config {
 
 		if ( null === self::$secret_key ) {
 
-			// Use the defined secret key, if it exists
+			// Use the defined secret key, if it exists, otherwise use the SECURE_AUTH_SALT if it exists
 			// @see: https://api.wordpress.org/secret-key/1.1/salt/
-			$secret_key = defined('GRAPHQL_JWT_AUTH_SECRET_KEY') ? GRAPHQL_JWT_AUTH_SECRET_KEY : false;
+			$salt = defined( SECURE_AUTH_SALT ) ? SECURE_AUTH_SALT : null;
+			$secret_key = defined('GRAPHQL_JWT_AUTH_SECRET_KEY') ? GRAPHQL_JWT_AUTH_SECRET_KEY : $salt;
 
 			// Filter the secret key, allowing for admin UI's, for example, to be able to create/manage/revoke the
 			// secret key as needed
@@ -155,7 +157,7 @@ class Config {
 	public function do_graphql_request() {
 		if ( is_wp_error( $this->jwt_error ) ) {
 			$error_code = $this->jwt_error->get_error_code();
-			throw new \Exception( $error_code->get_error_message( $error_code ) );
+			throw new UserError( $error_code->get_error_message( $error_code ) );
 		}
 	}
 

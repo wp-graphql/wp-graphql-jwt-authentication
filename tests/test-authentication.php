@@ -78,7 +78,7 @@ class AuthenticationTest extends WP_UnitTestCase {
 		 */
 		$actual = do_graphql_request( $query );
 
-		var_dump( $actual['data']['login']['user']['pages']['edges']['node'] );
+		var_dump( $actual['data']['login']['user']['pages']['edges'][0]['node'] );
 
 		/**
 		 * Establish the expectation for the output of the query
@@ -90,12 +90,14 @@ class AuthenticationTest extends WP_UnitTestCase {
 						'username' => 'testUser',
 						'pages' => [
 							'edges' => [
-								'node' => [
-									'id' => $global_id,
-									'title' => 'Test Page Title',
-									'content' => apply_filters( 'the_content', 'page content' ),
-								]
-							]
+								[
+									'node' => [
+										'id' => $global_id,
+										'title' => 'Test Page Title',
+										'content' => apply_filters( 'the_content', $args['post_content'] ),
+									],
+								],
+							],
 						],
 					],
 				],
