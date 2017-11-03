@@ -6,6 +6,10 @@ JSON Web Tokens are an open, industry standard [RFC 7519](https://tools.ietf.org
 
 This plugin is based off the `wp-api-jwt-auth` plugin by Enrique Chavez (https://github.com/Tmeister), but modified specifically for use with the <a href="https://github.com/wp-graphql/wp-graphql" target="_blank">WPGraphQL</a> plugin.
 
+### IN ACTION
+
+![WPGraphQL JWT AUTH DEMO - LOGIN, RECEIVE TOKEN AND USER DATA](https://github.com/wp-graphql/wp-graphql-jwt-authentication/blob/master/wpgraphql-auth.gif?raw=true "LOGIN, RECEIVE TOKEN AND USER DATA")
+
 ### REQUIREMENTS
 
 ### WPGraphQL
