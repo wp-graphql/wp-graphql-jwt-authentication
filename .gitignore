@@ -5,7 +5,7 @@ node_modules/
 *.zip
 *.tar.gz
 .idea
-vendor
+vendor/*
+!vendor/composer
+!vendor/firebase
 !vendor/autoload.php
-!vendor/composer/*
-!vendor/firebase/
