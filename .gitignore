@@ -8,4 +8,4 @@ node_modules/
 vendor
 !vendor/autoload.php
 !vendor/composer/*
-!vendor/php-jwt
+!vendor/firebase/
