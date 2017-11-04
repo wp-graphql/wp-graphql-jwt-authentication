@@ -32,11 +32,6 @@ class Config {
 		self::$secret_key = self::get_secret_key();
 
 		/**
-		 * Add cors support to the header if enabled
-		 */
-		add_action( 'graphql_process_http_request', [ $this, 'add_cors_support' ] );
-
-		/**
 		 * Determine the current user
 		 */
 		add_filter( 'determine_current_user', [ $this, 'determine_current_user' ], 10 );
@@ -78,31 +73,6 @@ class Config {
 		}
 
 		return ! empty( self::$secret_key ) ? self::$secret_key : null;
-
-	}
-
-	/**
-	 * If enabled, this will add "cors" support by adjusting the headers for the GraphQL request. This first
-	 * checks to see if the constant is defined, then passes it through a filter, allowing for that value to be
-	 * dynamic, for example an admin UI could be created that would allow for the option to be checked.
-	 *
-	 * @since 0.0.1
-	 * @return void
-	 */
-	public function add_cors_support() {
-
-		/**
-		 * Cors is disabled by default, but can be defined / filtered to be enabled
-		 *
-		 * @since 0.0.1
-		 */
-		$enable_cors = defined( 'GRAPHQL_JWT_AUTH_CORS_ENABLE' ) ? GRAPHQL_JWT_AUTH_CORS_ENABLE : false;
-		$enable_cors = apply_filters( 'graphql_jwt_auth_enable_cors', $enable_cors );
-
-		if ( $enable_cors ) {
-			$headers = apply_filters( 'graphql_jwt_auth_cors_allow_headers', 'Access-Control-Allow-Headers, Content-Type, Authorization' );
-			header( sprintf( 'Access-Control-Allow-Headers: %s', $headers ) );
-		}
 
 	}
 

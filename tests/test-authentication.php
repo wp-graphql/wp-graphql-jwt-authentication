@@ -57,7 +57,7 @@ class AuthenticationTest extends WP_UnitTestCase {
 		 */
 		$query = '
 		mutation { 
-			login(username: "testUser", password: "testPassword" ) {  
+			login( input: { username: "testUser", password: "testPassword" } ) {  
 				user {
 					username
 					pages{
@@ -77,8 +77,6 @@ class AuthenticationTest extends WP_UnitTestCase {
 		 * Run the GraphQL query
 		 */
 		$actual = do_graphql_request( $query );
-
-		var_dump( $actual['data']['login']['user']['pages']['edges'][0]['node'] );
 
 		/**
 		 * Establish the expectation for the output of the query
