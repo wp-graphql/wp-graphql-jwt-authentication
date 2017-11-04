@@ -2,7 +2,7 @@
     "name": "root/wp-graphql-jwt-authentication",
     "description": "JWT Authentication for WPGraphQL",
     "type": "wordpress-plugin",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "authors": [
         {
             "name": "jasonbahl",
