@@ -22,7 +22,7 @@ class AuthenticationTest extends WP_UnitTestCase {
 
 		$this->admin = $this->factory->user->create( [
 			'role' => 'administrator',
-			'user_login' => 'testUser',
+			'user_login' => 'testuser',
 			'user_pass' => 'testPassword',
 		] );
 
@@ -67,7 +67,7 @@ class AuthenticationTest extends WP_UnitTestCase {
 		 */
 		$actual = do_graphql_request( $this->login_mutation, 'LoginUser', [
 			'input' => [
-				'username' => 'testUser',
+				'username' => 'testuser',
 				'password' => 'badPassword',
 				'clientMutationId' => uniqid(),
 			]
@@ -95,7 +95,7 @@ class AuthenticationTest extends WP_UnitTestCase {
 		 */
 		$actual = do_graphql_request( $this->login_mutation, 'LoginUser', [
 			'input' => [
-				'username' => 'testUser',
+				'username' => 'testuser',
 				'password' => 'testPassword',
 				'clientMutationId' => uniqid(),
 			]
@@ -140,7 +140,7 @@ class AuthenticationTest extends WP_UnitTestCase {
 		 */
 		$actual = do_graphql_request( $this->login_mutation, 'LoginUser', [
 			'input' => [
-				'username' => 'testUser',
+				'username' => 'testuser',
 				'password' => 'testPassword',
 				'clientMutationId' => uniqid(),
 			]
@@ -156,7 +156,7 @@ class AuthenticationTest extends WP_UnitTestCase {
 				'login' => [
 					'authToken' => $token,
 					'user' => [
-						'username' => 'testUser',
+						'username' => 'testuser',
 						'pages' => [
 							'edges' => [
 								[
@@ -190,7 +190,7 @@ class AuthenticationTest extends WP_UnitTestCase {
 		 */
 		$actual = do_graphql_request( $this->login_mutation, 'LoginUser', [
 			'input' => [
-				'username' => 'testUser',
+				'username' => 'testuser',
 				'password' => 'testPassword',
 				'clientMutationId' => uniqid(),
 			]

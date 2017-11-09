@@ -274,6 +274,7 @@ class Auth {
 			/**
 			 * Decode the Token
 			 */
+			JWT::$leeway = 60;
 			$token = ! empty( $token ) ? JWT::decode( $token, self::get_secret_key(), [ 'HS256' ] ) : null;
 
 			/**
