@@ -137,6 +137,7 @@ class Auth {
 		/**
 		 * Encode the token
 		 */
+		JWT::$leeway = 60;
 		$token = JWT::encode( $token, self::get_secret_key() );
 
 		/**
