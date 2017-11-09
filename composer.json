@@ -1,5 +1,5 @@
 {
-    "name": "root/wp-graphql-jwt-authentication",
+    "name": "wp-graphql/wp-graphql-jwt-authentication",
     "description": "JWT Authentication for WPGraphQL",
     "type": "wordpress-plugin",
     "version": "0.2.1",
@@ -13,11 +13,17 @@
         "firebase/php-jwt": "^4.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "4.0.*"
+        "phpunit/phpunit": "^5.2"
+    },
+    "config": {
+        "optimize-autoloader": true
     },
     "autoload": {
         "psr-4": {
-            "WPGraphQL\\JWT_Authentication\\": "src"
-        }
+            "WPGraphQL\\JWT_Authentication\\": "src/"
+        },
+        "classmap": [
+            "src/"
+        ]
     }
 }

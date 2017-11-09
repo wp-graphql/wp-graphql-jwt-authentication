@@ -1,20 +1,52 @@
 <?php
+class _testAuth extends \WPGraphQL\JWT_Authentication\Auth {
+	public static function _getSignedToken ( $user ) {
+		return self::get_signed_token( $user );
+	}
+}
 
 class AuthenticationTest extends WP_UnitTestCase {
 
 	public $admin;
+	public $login_mutation;
 
 	/**
 	 * This function is run before each method
 	 * @since 0.0.5
 	 */
 	public function setUp() {
+
+		$_SERVER['HTTP_AUTHORIZATION'] = 'Bearer goo';
+
 		parent::setUp();
+
 		$this->admin = $this->factory->user->create( [
-			'role' => 'admin',
+			'role' => 'administrator',
 			'user_login' => 'testUser',
 			'user_pass' => 'testPassword',
 		] );
+
+
+		$this->login_mutation = '
+		mutation LoginUser( $input:LoginInput! ){ 
+			login( input:$input ) {  
+				authToken
+				user {
+					username
+					pages{
+						edges{
+							node{
+								id
+								title
+								content
+							}
+						}
+					}
+				}
+			} 
+		}';
+
+
 	}
 
 	/**
@@ -23,6 +55,57 @@ class AuthenticationTest extends WP_UnitTestCase {
 	 */
 	public function tearDown() {
 		parent::tearDown();
+	}
+
+	/**
+	 * Test logging in with a bad password to make sure we get an error returned
+	 */
+	public function testLoginWithBadCredentials() {
+
+		/**
+		 * Run the GraphQL query
+		 */
+		$actual = do_graphql_request( $this->login_mutation, 'LoginUser', [
+			'input' => [
+				'username' => 'testUser',
+				'password' => 'badPassword',
+				'clientMutationId' => uniqid(),
+			]
+		] );
+
+		/**
+		 * Assert that a bad password will throw an error
+		 */
+		$this->assertArrayHasKey( 'errors', $actual );
+
+	}
+
+	public function testLoginWithNoSecretKeyConfigured() {
+
+		/**
+		 * Set the secret key to be empty
+		 * which should throw an error
+		 */
+		add_filter( 'graphql_jwt_auth_secret_key', function() {
+			return null;
+		} );
+
+		/**
+		 * Run the GraphQL query
+		 */
+		$actual = do_graphql_request( $this->login_mutation, 'LoginUser', [
+			'input' => [
+				'username' => 'testUser',
+				'password' => 'testPassword',
+				'clientMutationId' => uniqid(),
+			]
+		] );
+
+		/**
+		 * Assert that a bad password will throw an error
+		 */
+		$this->assertArrayHasKey( 'errors', $actual );
+
 	}
 
 	/**
@@ -53,37 +136,25 @@ class AuthenticationTest extends WP_UnitTestCase {
 		$global_id = \GraphQLRelay\Relay::toGlobalId( 'page', $page_id );
 
 		/**
-		 * Create the query string to pass to the $query
-		 */
-		$query = '
-		mutation { 
-			login( input: { username: "testUser", password: "testPassword" } ) {  
-				user {
-					username
-					pages{
-						edges{
-							node{
-								id
-								title
-								content
-							}
-						}
-					}
-				}
-			} 
-		}';
-
-		/**
 		 * Run the GraphQL query
 		 */
-		$actual = do_graphql_request( $query );
+		$actual = do_graphql_request( $this->login_mutation, 'LoginUser', [
+			'input' => [
+				'username' => 'testUser',
+				'password' => 'testPassword',
+				'clientMutationId' => uniqid(),
+			]
+		] );
 
 		/**
 		 * Establish the expectation for the output of the query
 		 */
+		$user = new WP_User( $this->admin );
+		$token = _testAuth::_getSignedToken( $user );
 		$expected = [
 			'data' => [
 				'login' => [
+					'authToken' => $token,
 					'user' => [
 						'username' => 'testUser',
 						'pages' => [
@@ -103,6 +174,132 @@ class AuthenticationTest extends WP_UnitTestCase {
 		];
 
 		$this->assertEquals( $expected, $actual );
+	}
+
+	public function testLoginWithValidUserThatWasJustDeleted() {
+
+		/**
+		 * Filter the authentication to make sure it returns an error
+		 */
+		add_filter( 'authenticate', function() {
+			return 'goo';
+		}, 9999 );
+
+		/**
+		 * Run the GraphQL query
+		 */
+		$actual = do_graphql_request( $this->login_mutation, 'LoginUser', [
+			'input' => [
+				'username' => 'testUser',
+				'password' => 'testPassword',
+				'clientMutationId' => uniqid(),
+			]
+		] );
+
+		/**
+		 * Assert that a bad password will throw an error
+		 */
+		$this->assertArrayHasKey( 'errors', $actual );
+
+	}
+
+	public function testNonAuthenticatedRequest() {
+
+		$user = \WPGraphQL\JWT_Authentication\Auth::filter_determine_current_user( 0 );
+		$this->assertEquals( 0, $user );
+
+	}
+
+	public function testAuthenticatedRequestWithBadToken() {
+
+		add_filter( 'graphql_jwt_auth_get_auth_header', function() {
+			return 'Bearer BadToken';
+		} );
+
+		$user = \WPGraphQL\JWT_Authentication\Auth::filter_determine_current_user( 0 );
+		$this->assertEquals( 0, $user );
+
+	}
+
+	public function testAuthenticatedRequestWithValidToken() {
+
+		$test_user = new WP_User( $this->admin );
+		$token = _testAuth::_getSignedToken( $test_user );
+
+		add_filter( 'graphql_jwt_auth_get_auth_header', function() use ( $token ) {
+			return 'Bearer ' . $token;
+		} );
+
+		$user = \WPGraphQL\JWT_Authentication\Auth::filter_determine_current_user( 0 );
+		$this->assertEquals( $this->admin, $user );
+
+	}
+
+	public function testRequestWithNoToken() {
+
+		wp_set_current_user( 0 );
+		add_filter( 'graphql_jwt_auth_get_auth_header', function() {
+			return null;
+		} );
+
+		$user = \WPGraphQL\JWT_Authentication\Auth::filter_determine_current_user( 0 );
+		$this->assertEquals( 0, $user );
+
+	}
+
+	public function testRequestWithInvalidToken() {
+
+		add_filter( 'graphql_jwt_auth_token_before_sign', function( $token ) {
+			$token['iss'] = null;
+			return $token;
+		} );
+
+		$test_user = new WP_User( $this->admin );
+		$token = _testAuth::_getSignedToken( $test_user );
+
+		add_filter( 'graphql_jwt_auth_get_auth_header', function() use ( $token ) {
+			return 'Bearer ' . $token;
+		} );
+
+		/**
+		 * Validate the token (should not work because we filtered the iss to make it invalid)
+		 */
+		$token = \WPGraphQL\JWT_Authentication\Auth::validate_token( $token );
+
+		/**
+		 * Validate token should return nothing if it can't be validated properly
+		 */
+		$this->assertTrue( is_wp_error( $token ) );
+
+	}
+
+	/**
+	 * If the secret key is empty we should get an exception
+	 */
+	public function testNoSecretKey() {
+
+		/**
+		 * Filter the secret key to return null, which should cause an exception to be thrown
+		 */
+		add_filter( 'graphql_jwt_auth_secret_key', function() {
+			return null;
+		} );
+
+		/**
+		 * Set our expected exception
+		 */
+		$this->setExpectedException( 'Exception', 'JWT is not configured properly' );
+
+		/**
+		 * Run the function to determine the current user
+		 */
+		$user = \WPGraphQL\JWT_Authentication\Auth::filter_determine_current_user( 0 );
+
+		/**
+		 * Ensure that the Exception prevented any user from being authenticated
+		 */
+		$this->assertEquals( 0, $user );
+
 	}
 
 }

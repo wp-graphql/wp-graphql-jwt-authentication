@@ -5,6 +5,8 @@ node_modules/
 *.zip
 *.tar.gz
 .idea
+coverage/
+build/
 vendor/*
 !vendor/composer
 !vendor/firebase

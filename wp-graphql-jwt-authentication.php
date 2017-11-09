@@ -11,21 +11,21 @@
  *
  * @package         WPGraphQL_JWT_Authentication
  */
-namespace WPGraphQL;
+
+namespace WPGraphQL\JWT_Authentication;
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-use WPGraphQL\JWT_Authentication\Config;
-
-if ( ! class_exists( 'JWT_Authentication' ) ) :
+if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 
 	final class JWT_Authentication {
 
 		/**
 		 * Stores the instance of the JWT_Authentication class
+		 *
 		 * @var JWT_Authentication The one true JWT_Authentication
 		 * @since  0.0.1
 		 * @access private
@@ -34,6 +34,7 @@ if ( ! class_exists( 'JWT_Authentication' ) ) :
 
 		/**
 		 * The instance of the JWT_Authentication object
+		 *
 		 * @return object|JWT_Authentication - The one true JWT_Authentication
 		 * @since  0.0.1
 		 * @access public
@@ -46,17 +47,17 @@ if ( ! class_exists( 'JWT_Authentication' ) ) :
 				self::$instance->includes();
 			}
 
-			new Config();
+			self::$instance->init();
 
 			/**
 			 * Fire off init action
 			 *
-			 * @param JWT_Authentication $instance The instance of the JWT_Authentication class
+			 * @param JWT_Authentication $instance The instance of the Init_JWT_Authentication class
 			 */
 			do_action( 'graphql_jwt_authentication_init', self::$instance );
 
 			/**
-			 * Return the JWT_Authentication Instance
+			 * Return the Init_JWT_Authentication Instance
 			 */
 			return self::$instance;
 		}
@@ -65,6 +66,7 @@ if ( ! class_exists( 'JWT_Authentication' ) ) :
 		 * Throw error on object clone.
 		 * The whole idea of the singleton design pattern is that there is a single object
 		 * therefore, we don't want the object to be cloned.
+		 *
 		 * @since  0.0.1
 		 * @access public
 		 * @return void
@@ -72,12 +74,13 @@ if ( ! class_exists( 'JWT_Authentication' ) ) :
 		public function __clone() {
 
 			// Cloning instances of the class is forbidden.
-			_doing_it_wrong( __FUNCTION__, esc_html__( 'The JWT_Authentication class should not be cloned.', 'wp-graphql-jwt-authentication' ), '0.0.1' );
+			_doing_it_wrong( __FUNCTION__, esc_html__( 'The Init_JWT_Authentication class should not be cloned.', 'wp-graphql-jwt-authentication' ), '0.0.1' );
 
 		}
 
 		/**
 		 * Disable unserializing of the class.
+		 *
 		 * @since  0.0.1
 		 * @access protected
 		 * @return void
@@ -91,6 +94,7 @@ if ( ! class_exists( 'JWT_Authentication' ) ) :
 
 		/**
 		 * Setup plugin constants.
+		 *
 		 * @access private
 		 * @since  0.0.1
 		 * @return void
@@ -122,6 +126,7 @@ if ( ! class_exists( 'JWT_Authentication' ) ) :
 		/**
 		 * Include required files.
 		 * Uses composer's autoload
+		 *
 		 * @access private
 		 * @since  0.0.1
 		 * @return void
@@ -133,12 +138,34 @@ if ( ! class_exists( 'JWT_Authentication' ) ) :
 
 		}
 
+		/**
+		 * Initialize the plugin
+		 */
+		private static function init() {
+
+			/**
+			 * Filter the rootMutation fields
+			 */
+			add_filter( 'graphql_rootMutation_fields', [
+				'\WPGraphQL\JWT_Authentication\Login',
+				'root_mutation_fields'
+			], 10, 1 );
+
+			/**
+			 * Filter how WordPress determines the current user
+			 */
+			add_filter( 'determine_current_user', [
+				'\WPGraphQL\JWT_Authentication\Auth',
+				'filter_determine_current_user'
+			], 10 );
+		}
+
 	}
 
 endif;
 
-function graphql_jwt_authentication_init() {
+function init() {
 	return JWT_Authentication::instance();
 }
 
-add_action( 'graphql_init', '\WPGraphQL\graphql_jwt_authentication_init' );
+add_action( 'graphql_init', '\WPGraphQL\JWT_Authentication\init' );

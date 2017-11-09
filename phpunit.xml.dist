@@ -6,9 +6,29 @@
 	convertNoticesToExceptions="true"
 	convertWarningsToExceptions="true"
 	>
+	<groups>
+		<exclude>
+			<group>ajax</group>
+		</exclude>
+		<exclude>
+			<group>external-http</group>
+		</exclude>
+		<exclude>
+			<group>ms-files</group>
+		</exclude>
+	</groups>
 	<testsuites>
 		<testsuite>
 			<directory prefix="test-" suffix=".php">./tests/</directory>
 		</testsuite>
 	</testsuites>
+	<logging>
+		<log type="coverage-clover" target="build/logs/clover.xml"/>
+	</logging>
+	<filter>
+		<whitelist processUncoveredFilesFromWhitelist="true">
+			<file>./wp-graphql-jwt-authentication.php</file>
+			<directory suffix=".php">./src/</directory>
+		</whitelist>
+	</filter>
 </phpunit>

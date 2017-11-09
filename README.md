@@ -4,38 +4,25 @@ This plugin extends the <a href="https://github.com/wp-graphql/wp-graphql" targe
 
 JSON Web Tokens are an open, industry standard [RFC 7519](https://tools.ietf.org/html/rfc7519) method for representing claims securely between two parties.
 
-This plugin is based off the `wp-api-jwt-auth` plugin by Enrique Chavez (https://github.com/Tmeister), but modified specifically for use with the <a href="https://github.com/wp-graphql/wp-graphql" target="_blank">WPGraphQL</a> plugin.
+This plugin was initially based off the `wp-api-jwt-auth` plugin by Enrique Chavez (https://github.com/Tmeister), but modified specifically for use with the <a href="https://github.com/wp-graphql/wp-graphql" target="_blank">WPGraphQL</a> plugin.
 
-## IN ACTION
+## How it Works
 
-![WPGraphQL JWT AUTH DEMO - LOGIN, RECEIVE TOKEN AND USER DATA](https://github.com/wp-graphql/wp-graphql-jwt-authentication/blob/master/wpgraphql-auth.gif?raw=true "LOGIN, RECEIVE TOKEN AND USER DATA")
+This plugin adds a new `login` mutation to the WPGraphQL Schema. 
 
-## REQUIREMENTS
+This can be used like so: 
 
-#### WPGraphQL
-
-This plugin exists as an extension of <a href="https://github.com/wp-graphql/wp-graphql" target="_blank">WPGraphQL</a> and requires that plugin to be active.
-
-#### PHP
-
-**Minimum PHP version: 5.5**
-
-#### PHP HTTP Authorization Header enabled
-
-Check with your hosting provider to determine if the Authorization headers are supported or how to add support if they aren't.
-
-### CONFIGURATION & ACTIVATION
-#### Configure the Secret Key
-
-The JWT needs a **secret key** to sign the token this **secret key** must be unique and never revealed.
-
-To add the **secret key** edit your wp-config.php file and add a new constant called **GRAPHQL_JWT_AUTH_SECRET_KEY**
-
-`
-define('GRAPHQL_JWT_AUTH_SECRET_KEY', 'your-top-secrect-key');
-`
-
-You can use a string from here https://api.wordpress.org/secret-key/1.1/salt/
-
-
-Finally activate the plugin within your wp-admin.
+```
+mutation LoginUser {
+  login( input: {
+    login: "your_login"
+    password: "your password"
+  } ) {
+    authToken
+    user: {
+      id
+      name
+    }
+  }
+}
+```
