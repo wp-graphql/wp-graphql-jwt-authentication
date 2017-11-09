@@ -27,7 +27,6 @@
 	</logging>
 	<filter>
 		<whitelist processUncoveredFilesFromWhitelist="true">
-			<file>./wp-graphql-jwt-authentication.php</file>
 			<directory suffix=".php">./src/</directory>
 		</whitelist>
 	</filter>
