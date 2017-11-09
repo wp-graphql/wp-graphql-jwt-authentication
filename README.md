@@ -26,3 +26,13 @@ mutation LoginUser {
   }
 }
 ```
+
+The `authToken` that is received in response to the login mutation can then be stored in local storage (or similar) and 
+used in subsequent requests as an HTTP Authorization header to Authenticate the user prior to execution of the 
+GraphQL request. 
+
+- **Set authorization header in Apollo Client**: https://www.apollographql.com/docs/react/recipes/authentication.html#Header
+- **Set authorization header in Relay Modern**: https://facebook.github.io/relay/docs/guides-network-layer.html#default-network-layer
+- **Set authorization header in Axios**: https://github.com/axios/axios#axioscreateconfig
+
+## Example using GraphiQL
