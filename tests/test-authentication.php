@@ -149,31 +149,25 @@ class AuthenticationTest extends WP_UnitTestCase {
 		/**
 		 * Establish the expectation for the output of the query
 		 */
-		$user = new WP_User( $this->admin );
-		$token = _testAuth::_getSignedToken( $user );
-		$expected = [
-			'data' => [
-				'login' => [
-					'authToken' => $token,
-					'user' => [
-						'username' => 'testuser',
-						'pages' => [
-							'edges' => [
-								[
-									'node' => [
-										'id' => $global_id,
-										'title' => 'Test Page Title',
-										'content' => apply_filters( 'the_content', $args['post_content'] ),
-									],
-								],
-							],
+		$expected_user = [
+			'username' => 'testuser',
+			'pages' => [
+				'edges' => [
+					[
+						'node' => [
+							'id' => $global_id,
+							'title' => 'Test Page Title',
+							'content' => apply_filters( 'the_content', $args['post_content'] ),
 						],
 					],
 				],
 			],
 		];
 
-		$this->assertEquals( $expected, $actual );
+		$token = $actual['data']['login']['authToken'];
+		$this->assertNotEmpty( $token );
+		$this->assertEquals( $expected_user, $actual['data']['login']['user'] );
+
 	}
 
 	public function testLoginWithValidUserThatWasJustDeleted() {
