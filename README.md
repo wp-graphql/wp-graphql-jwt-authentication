@@ -1,4 +1,10 @@
+![Logo](https://www.wpgraphql.com/wp-content/uploads/2017/06/wpgraphql-logo-e1502819081849.png)
+
 # WPGraphQL JWT Authentication
+
+[![Build Status](https://travis-ci.org/wp-graphql/wp-graphql-jwt-authentication.svg?branch=master)](https://travis-ci.org/wp-graphql/wp-graphql-jwt-authentication)
+[![Coverage Status](https://coveralls.io/repos/github/wp-graphql/wp-graphql-jwt-authentication/badge.svg?branch=master)](https://coveralls.io/github/wp-graphql/wp-graphql-jwt-authentication?branch=master)
+
 
 This plugin extends the <a href="https://github.com/wp-graphql/wp-graphql" target="_blank">WPGraphQL</a> plugin to provide authentication using JWT (JSON Web Tokens)
 
