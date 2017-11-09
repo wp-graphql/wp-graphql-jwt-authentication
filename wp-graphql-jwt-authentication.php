@@ -1,13 +1,18 @@
 <?php
 /**
- * Plugin Name:     WPGraphQL JWT Authentication
- * Plugin URI:      https://www.wpgraphql.com
- * Description:     JWT Authentication for WPGraphQL
- * Author:          WPGraphQL, Jason Bahl
- * Author URI:      https://www.wpgraphql.com
- * Text Domain:     wp-graphql-jwt-authentication-jwt-authentication
- * Domain Path:     /languages
- * Version:         0.3.0
+ * Plugin Name: WPGraphQL JWT Authentication
+ * Plugin URI: https://www.wpgraphql.com
+ * Description: JWT Authentication for WPGraphQL
+ * Author: WPGraphQL, Jason Bahl
+ * Author URI: https://www.wpgraphql.com
+ * Text Domain: wp-graphql-jwt-authentication-jwt-authentication
+ * Domain Path: /languages
+ * Version: 0.3.0
+ * Requires at least: 4.7.0
+ * Tested up to: 4.8.3
+ * Requires PHP: 5.5
+ * License: GPL-3
+ * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  *
  * @package         WPGraphQL_JWT_Authentication
  */
