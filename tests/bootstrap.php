@@ -17,8 +17,13 @@ require_once $_tests_dir . '/includes/functions.php';
  * Load required plugins
  */
 function _manually_load_plugin() {
+	$_wp_content_dir = getenv( 'WP_CORE_DIR' );
+	if ( ! $_wp_content_dir ) {
+		$_wp_content_dir = '/tmp/wp-graphql-jwt-authentication/wordpress/wp-content';
+	}
+
+	require_once $_wp_content_dir . '/plugins/wp-graphql/wp-graphql.php';
 	require_once dirname( dirname( __FILE__ ) ) . '/wp-graphql-jwt-authentication.php';
-	require_once dirname( dirname( __FILE__, 2 ) ) . '/wp-graphql/wp-graphql.php';
 }
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
