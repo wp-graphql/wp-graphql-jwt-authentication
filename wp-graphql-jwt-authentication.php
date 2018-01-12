@@ -126,6 +126,11 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 				define( 'WPGRAPHQL_JWT_AUTHENTICATION_PLUGIN_FILE', __FILE__ );
 			}
 
+			// Whether to autoload the files or not
+			if ( ! defined( 'WPGRAPHQL_JWT_AUTHENTICATION_AUTOLOAD' ) ) {
+				define( 'WPGRAPHQL_JWT_AUTHENTICATION_AUTOLOAD', true );
+			}
+
 		}
 
 		/**
@@ -139,14 +144,25 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 		private function includes() {
 
 			// Autoload Required Classes
-			require_once( WPGRAPHQL_JWT_AUTHENTICATION_PLUGIN_DIR . 'vendor/autoload.php' );
-
+			if ( defined( 'WPGRAPHQL_JWT_AUTHENTICATION_AUTOLOAD' ) && true == WPGRAPHQL_JWT_AUTHENTICATION_AUTOLOAD ) {
+				require_once( WPGRAPHQL_JWT_AUTHENTICATION_PLUGIN_DIR . 'vendor/autoload.php' );
+			}
 		}
 
 		/**
 		 * Initialize the plugin
 		 */
 		private static function init() {
+
+			/**
+			 * Initialize the Admin functionality
+			 */
+			Admin::init();
+
+			/**
+			 * Initialize the GraphQL fields for managing tokens
+			 */
+			ManageTokens::init();
 
 			/**
 			 * Filter the rootMutation fields
@@ -163,6 +179,7 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 				'\WPGraphQL\JWT_Authentication\Auth',
 				'filter_determine_current_user'
 			], 10 );
+
 		}
 
 	}

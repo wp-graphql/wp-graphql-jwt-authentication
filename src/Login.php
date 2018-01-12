@@ -45,6 +45,10 @@ class Login {
 						'type' => Types::string(),
 						'description' => __( 'JWT Token that can be used in future requests for Authentication', 'wp-graphql-jwt-authentication' ),
 					],
+					'refreshToken' => [
+						'type' => Types::string(),
+						'description' => __( 'A JWT token that can be used in future requests to get a refreshed jwtAuthToken. If the refresh token used in a request is revoked or otherwise invalid, a valid Auth token will NOT be issued in the response headers.', 'wp-graphql-jwt-authentication' ),
+					],
 					'user' => [
 						'type' => Types::user(),
 						'description' => __( 'The user that was logged in', 'wp-graphql-jwt-authentication' ),
