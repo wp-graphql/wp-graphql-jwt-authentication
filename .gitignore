@@ -11,3 +11,6 @@ vendor/*
 !vendor/composer
 !vendor/firebase
 !vendor/autoload.php
+c3.php
+!/tests
+/tests/*.suite.yml

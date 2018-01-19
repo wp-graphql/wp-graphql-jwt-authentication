@@ -4,13 +4,13 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInite9a060e8e6aba1f27da57373314789ba
+class ComposerStaticInitabb718112a606b0939e63a0a70b7cb33
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         'be01b9b16925dcb22165c40b46681ac6' => __DIR__ . '/..' . '/wp-cli/php-cli-tools/lib/cli/cli.php',
-        '8cd2fca4db21bffce1ad0612f7caeec4' => __DIR__ . '/..' . '/ramsey/array_column/src/array_column.php',
         '3937806105cc8e221b8fa8db5b70d2f2' => __DIR__ . '/..' . '/wp-cli/mustangostang-spyc/includes/functions.php',
+        '8cd2fca4db21bffce1ad0612f7caeec4' => __DIR__ . '/..' . '/ramsey/array_column/src/array_column.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
@@ -125,6 +125,7 @@ class ComposerStaticInite9a060e8e6aba1f27da57373314789ba
             'Composer\\Semver\\' => 16,
             'Composer\\CaBundle\\' => 18,
             'Composer\\' => 9,
+            'Codeception\\c3\\' => 15,
             'Codeception\\Extension\\' => 22,
             'Codeception\\' => 12,
             'Carbon\\' => 7,
@@ -327,6 +328,10 @@ class ComposerStaticInite9a060e8e6aba1f27da57373314789ba
         'Composer\\' => 
         array (
             0 => __DIR__ . '/..' . '/composer/composer/src/Composer',
+        ),
+        'Codeception\\c3\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/codeception/c3',
         ),
         'Codeception\\Extension\\' => 
         array (
@@ -834,6 +839,7 @@ class ComposerStaticInite9a060e8e6aba1f27da57373314789ba
         'Codeception\\Util\\Xml' => __DIR__ . '/..' . '/codeception/codeception/src/Codeception/Util/Xml.php',
         'Codeception\\Util\\XmlBuilder' => __DIR__ . '/..' . '/codeception/codeception/src/Codeception/Util/XmlBuilder.php',
         'Codeception\\Util\\XmlStructure' => __DIR__ . '/..' . '/codeception/codeception/src/Codeception/Util/XmlStructure.php',
+        'Codeception\\c3\\Installer' => __DIR__ . '/..' . '/codeception/c3/Installer.php',
         'Comment_Command' => __DIR__ . '/..' . '/wp-cli/entity-command/src/Comment_Command.php',
         'Comment_Meta_Command' => __DIR__ . '/..' . '/wp-cli/entity-command/src/Comment_Meta_Command.php',
         'Composer\\Autoload\\AutoloadGenerator' => __DIR__ . '/..' . '/composer/composer/src/Composer/Autoload/AutoloadGenerator.php',
@@ -2729,6 +2735,8 @@ class ComposerStaticInite9a060e8e6aba1f27da57373314789ba
         'SebastianBergmann\\Environment\\OperatingSystem' => __DIR__ . '/..' . '/sebastian/environment/src/OperatingSystem.php',
         'SebastianBergmann\\Environment\\Runtime' => __DIR__ . '/..' . '/sebastian/environment/src/Runtime.php',
         'SebastianBergmann\\Exporter\\Exporter' => __DIR__ . '/..' . '/sebastian/exporter/src/Exporter.php',
+        'SebastianBergmann\\FinderFacade\\Configuration' => __DIR__ . '/..' . '/sebastian/finder-facade/src/Configuration.php',
+        'SebastianBergmann\\FinderFacade\\FinderFacade' => __DIR__ . '/..' . '/sebastian/finder-facade/src/FinderFacade.php',
         'SebastianBergmann\\GlobalState\\Blacklist' => __DIR__ . '/..' . '/sebastian/global-state/src/Blacklist.php',
         'SebastianBergmann\\GlobalState\\CodeExporter' => __DIR__ . '/..' . '/sebastian/global-state/src/CodeExporter.php',
         'SebastianBergmann\\GlobalState\\Exception' => __DIR__ . '/..' . '/sebastian/global-state/src/exceptions/Exception.php',
@@ -2741,6 +2749,12 @@ class ComposerStaticInite9a060e8e6aba1f27da57373314789ba
         'SebastianBergmann\\ObjectReflector\\Exception' => __DIR__ . '/..' . '/sebastian/object-reflector/src/Exception.php',
         'SebastianBergmann\\ObjectReflector\\InvalidArgumentException' => __DIR__ . '/..' . '/sebastian/object-reflector/src/InvalidArgumentException.php',
         'SebastianBergmann\\ObjectReflector\\ObjectReflector' => __DIR__ . '/..' . '/sebastian/object-reflector/src/ObjectReflector.php',
+        'SebastianBergmann\\PHPCOV\\Application' => __DIR__ . '/..' . '/phpunit/phpcov/src/Application.php',
+        'SebastianBergmann\\PHPCOV\\BaseCommand' => __DIR__ . '/..' . '/phpunit/phpcov/src/BaseCommand.php',
+        'SebastianBergmann\\PHPCOV\\ExecuteCommand' => __DIR__ . '/..' . '/phpunit/phpcov/src/ExecuteCommand.php',
+        'SebastianBergmann\\PHPCOV\\MergeCommand' => __DIR__ . '/..' . '/phpunit/phpcov/src/MergeCommand.php',
+        'SebastianBergmann\\PHPCOV\\PatchCoverage' => __DIR__ . '/..' . '/phpunit/phpcov/src/PatchCoverage.php',
+        'SebastianBergmann\\PHPCOV\\PatchCoverageCommand' => __DIR__ . '/..' . '/phpunit/phpcov/src/PatchCoverageCommand.php',
         'SebastianBergmann\\RecursionContext\\Context' => __DIR__ . '/..' . '/sebastian/recursion-context/src/Context.php',
         'SebastianBergmann\\RecursionContext\\Exception' => __DIR__ . '/..' . '/sebastian/recursion-context/src/Exception.php',
         'SebastianBergmann\\RecursionContext\\InvalidArgumentException' => __DIR__ . '/..' . '/sebastian/recursion-context/src/InvalidArgumentException.php',
@@ -3296,6 +3310,20 @@ class ComposerStaticInite9a060e8e6aba1f27da57373314789ba
         'TheSeer\\Tokenizer\\TokenCollectionException' => __DIR__ . '/..' . '/theseer/tokenizer/src/TokenCollectionException.php',
         'TheSeer\\Tokenizer\\Tokenizer' => __DIR__ . '/..' . '/theseer/tokenizer/src/Tokenizer.php',
         'TheSeer\\Tokenizer\\XMLSerializer' => __DIR__ . '/..' . '/theseer/tokenizer/src/XMLSerializer.php',
+        'TheSeer\\fDOM\\CSS\\DollarEqualRule' => __DIR__ . '/..' . '/theseer/fdomdocument/src/css/DollarEqualRule.php',
+        'TheSeer\\fDOM\\CSS\\NotRule' => __DIR__ . '/..' . '/theseer/fdomdocument/src/css/NotRule.php',
+        'TheSeer\\fDOM\\CSS\\NthChildRule' => __DIR__ . '/..' . '/theseer/fdomdocument/src/css/NthChildRule.php',
+        'TheSeer\\fDOM\\CSS\\RegexRule' => __DIR__ . '/..' . '/theseer/fdomdocument/src/css/RegexRule.php',
+        'TheSeer\\fDOM\\CSS\\RuleInterface' => __DIR__ . '/..' . '/theseer/fdomdocument/src/css/RuleInterface.php',
+        'TheSeer\\fDOM\\CSS\\Translator' => __DIR__ . '/..' . '/theseer/fdomdocument/src/css/Translator.php',
+        'TheSeer\\fDOM\\XPathQuery' => __DIR__ . '/..' . '/theseer/fdomdocument/src/XPathQuery.php',
+        'TheSeer\\fDOM\\XPathQueryException' => __DIR__ . '/..' . '/theseer/fdomdocument/src/XPathQueryException.php',
+        'TheSeer\\fDOM\\fDOMDocument' => __DIR__ . '/..' . '/theseer/fdomdocument/src/fDOMDocument.php',
+        'TheSeer\\fDOM\\fDOMDocumentFragment' => __DIR__ . '/..' . '/theseer/fdomdocument/src/fDOMDocumentFragment.php',
+        'TheSeer\\fDOM\\fDOMElement' => __DIR__ . '/..' . '/theseer/fdomdocument/src/fDOMElement.php',
+        'TheSeer\\fDOM\\fDOMException' => __DIR__ . '/..' . '/theseer/fdomdocument/src/fDOMException.php',
+        'TheSeer\\fDOM\\fDOMNode' => __DIR__ . '/..' . '/theseer/fdomdocument/src/fDOMNode.php',
+        'TheSeer\\fDOM\\fDOMXPath' => __DIR__ . '/..' . '/theseer/fdomdocument/src/fDOMXPath.php',
         'Theme_Command' => __DIR__ . '/..' . '/wp-cli/extension-command/src/Theme_Command.php',
         'Theme_Mod_Command' => __DIR__ . '/..' . '/wp-cli/extension-command/src/Theme_Mod_Command.php',
         'Transient_Command' => __DIR__ . '/..' . '/wp-cli/cache-command/src/Transient_Command.php',
@@ -3303,10 +3331,10 @@ class ComposerStaticInite9a060e8e6aba1f27da57373314789ba
         'User_Meta_Command' => __DIR__ . '/..' . '/wp-cli/entity-command/src/User_Meta_Command.php',
         'User_Session_Command' => __DIR__ . '/..' . '/wp-cli/entity-command/src/User_Session_Command.php',
         'User_Term_Command' => __DIR__ . '/..' . '/wp-cli/entity-command/src/User_Term_Command.php',
-        'WPGraphQL\\JWT_Authentication\\Admin' => __DIR__ . '/../..' . '/src/Admin.php',
         'WPGraphQL\\JWT_Authentication\\Auth' => __DIR__ . '/../..' . '/src/Auth.php',
         'WPGraphQL\\JWT_Authentication\\Login' => __DIR__ . '/../..' . '/src/Login.php',
         'WPGraphQL\\JWT_Authentication\\ManageTokens' => __DIR__ . '/../..' . '/src/ManageTokens.php',
+        'WPGraphQL\\JWT_Authentication\\RefreshToken' => __DIR__ . '/../..' . '/src/RefreshToken.php',
         'WP_CLI' => __DIR__ . '/..' . '/wp-cli/wp-cli/php/class-wp-cli.php',
         'WP_CLI\\AutoloadSplitter' => __DIR__ . '/..' . '/wp-cli/wp-cli/php/WP_CLI/AutoloadSplitter.php',
         'WP_CLI\\AutoloadSplitter\\AutoloadGenerator' => __DIR__ . '/..' . '/wp-cli/autoload-splitter/src/AutoloadGenerator.php',
@@ -3554,11 +3582,11 @@ class ComposerStaticInite9a060e8e6aba1f27da57373314789ba
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInite9a060e8e6aba1f27da57373314789ba::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInite9a060e8e6aba1f27da57373314789ba::$prefixDirsPsr4;
-            $loader->fallbackDirsPsr4 = ComposerStaticInite9a060e8e6aba1f27da57373314789ba::$fallbackDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInite9a060e8e6aba1f27da57373314789ba::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInite9a060e8e6aba1f27da57373314789ba::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitabb718112a606b0939e63a0a70b7cb33::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitabb718112a606b0939e63a0a70b7cb33::$prefixDirsPsr4;
+            $loader->fallbackDirsPsr4 = ComposerStaticInitabb718112a606b0939e63a0a70b7cb33::$fallbackDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitabb718112a606b0939e63a0a70b7cb33::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInitabb718112a606b0939e63a0a70b7cb33::$classMap;
 
         }, null, ClassLoader::class);
     }

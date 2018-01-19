@@ -7,12 +7,12 @@ paths:
 actor_suffix: Tester
 coverage:
     enabled: true
+    c3_url: 'http://wp.localhost/wp-content/plugins/wp-graphql-jwt-authentication/c3.php'
     whitelist:
       include:
         - wp-graphql-jwt-authentication.php
         - access-functions.php
         - src/*.php
-
 extensions:
     enabled:
         - Codeception\Extension\RunFailed

@@ -24,6 +24,15 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+/**
+ * If the codeception remote coverage file exists, require it.
+ *
+ * This file should only exist locally or when CI bootstraps the environment for testing
+ */
+if ( file_exists( __DIR__ . '/c3.php' ) ) {
+	require_once( 'c3.php' );
+}
+
 if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 
 	final class JWT_Authentication {
@@ -154,10 +163,6 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 		 */
 		private static function init() {
 
-			/**
-			 * Initialize the Admin functionality
-			 */
-			Admin::init();
 
 			/**
 			 * Initialize the GraphQL fields for managing tokens
@@ -169,6 +174,11 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 			 */
 			add_filter( 'graphql_rootMutation_fields', [
 				'\WPGraphQL\JWT_Authentication\Login',
+				'root_mutation_fields'
+			], 10, 1 );
+
+			add_filter( 'graphql_rootMutation_fields', [
+				'\WPGraphQL\JWT_Authentication\RefreshToken',
 				'root_mutation_fields'
 			], 10, 1 );
 

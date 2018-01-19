@@ -69,7 +69,19 @@ $I->seeResponseCodeIs( 200 );
 
 /**
  * Grab the Refresh header. Because the request was properly authenticated, there should
- * be a valid refresh header in the response
+ * be a valid refresh header in the response. This refresh token should be stored
+ * for later use. The authTokens are short-lived, so the client can check the expiration of
+ * the authToken before making authenticated requests, and if the token is expired, it can use the
+ * refresh token to ask for a new authToken. Additionally, if any authenticated request returns a 403 status,
+ * that means the token was invalid (expired or otherwise), and that should trigger the client to refresh the authToken
+ * using the refresh token.
+ *
+ * If the request to refresh an authToken using a refresh token fails, that means that the refresh token has been revoked,
+ * or perhaps the user no longer exists, or something else is preventing users from obtaining new authTokens.
+ *
+ * At that point, the user can attempt to authenticate via a login mutation again, and if that fails, the user probably
+ * is not supposed to have access to the system, or a system administrator would need to be contacted because some other
+ * forces are at work preventing user auth. . . I'd probably blame the Inform video plugin at this point :wink:
  */
 $refreshTokenHeader = $I->grabHttpHeader('X-JWT-Refresh' );
 $I->assertNotEmpty( $refreshTokenHeader );

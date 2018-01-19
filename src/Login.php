@@ -22,7 +22,7 @@ class Login {
 		return $fields;
 	}
 
-	public static function mutation() {
+	protected static function mutation() {
 
 		if ( empty( self::$mutation ) ) {
 
@@ -38,7 +38,7 @@ class Login {
 					'password' => [
 						'type' => Types::non_null( Types::string() ),
 						'description' => __( 'The plain-text password for the user logging in.', 'wp-graphql-jwt-authentication' ),
-					]
+					],
 				],
 				'outputFields' => [
 					'authToken' => [

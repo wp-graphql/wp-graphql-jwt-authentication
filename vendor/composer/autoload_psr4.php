@@ -54,6 +54,7 @@ return array(
     'Composer\\Semver\\' => array($vendorDir . '/composer/semver/src'),
     'Composer\\CaBundle\\' => array($vendorDir . '/composer/ca-bundle/src'),
     'Composer\\' => array($vendorDir . '/composer/composer/src/Composer'),
+    'Codeception\\c3\\' => array($vendorDir . '/codeception/c3'),
     'Codeception\\Extension\\' => array($vendorDir . '/codeception/codeception/ext'),
     'Codeception\\' => array($vendorDir . '/codeception/codeception/src/Codeception', $vendorDir . '/lucatume/wp-browser/src/Codeception'),
     'Carbon\\' => array($vendorDir . '/nesbot/carbon/src/Carbon'),
