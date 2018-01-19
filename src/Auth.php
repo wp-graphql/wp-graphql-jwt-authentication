@@ -24,7 +24,7 @@ class Auth {
 
 		// Use the defined secret key, if it exists, otherwise use the SECURE_AUTH_SALT if it exists
 		// @see: https://api.wordpress.org/secret-key/1.1/salt/
-		$salt       = defined( SECURE_AUTH_SALT ) ? SECURE_AUTH_SALT : null;
+		$salt       = defined( SECURE_AUTH_SALT ) ? SECURE_AUTH_SALT : 'jwt-authentication';
 		$secret_key = defined( 'GRAPHQL_JWT_AUTH_SECRET_KEY' ) ? GRAPHQL_JWT_AUTH_SECRET_KEY : $salt;
 
 		return apply_filters( 'graphql_jwt_auth_secret_key', $secret_key );
@@ -107,7 +107,7 @@ class Auth {
 			/**
 			 * Set the expiration time, default is 300 seconds.
 			 */
-			$expiration = self::get_token_issued() + ( 300 );
+			$expiration = self::get_token_issued() + 300;
 
 			/**
 			 * Determine the expiration value. Default is 7 days, but is filterable to be configured as needed
@@ -118,7 +118,7 @@ class Auth {
 
 		}
 
-		return ! empty( self::$expiration ) && is_string( self::$expiration ) ? self::$expiration : null;
+		return ! empty( self::$expiration ) ? self::$expiration : null;
 
 	}
 
@@ -484,6 +484,12 @@ class Auth {
 
 	}
 
+	protected static function set_status( $status_code ) {
+		add_filter( 'graphql_response_status_code', function() use ( $status_code ) {
+			return $status_code;
+		});
+	}
+
 	/**
 	 * Main validation function, this function try to get the Authentication
 	 * headers and decoded.
@@ -575,6 +581,7 @@ class Auth {
 			 * If any exceptions are caught
 			 */
 		} catch ( \Exception $error ) {
+			self::set_status( 403 );
 			return new \WP_Error( 'invalid_token', __( 'The JWT Token is invalid', 'wp-graphql-jwt-authentication' ) );
 		}
 

@@ -24,7 +24,7 @@ modules:
       WPDb:
         dsn: 'mysql:host=127.0.0.1;dbname=wpgraphql_jwt_auth_serve'
         user: 'root'
-        password: 'jbutt#123'
+        password: ''
         dump: 'tests/_data/dump.sql'
         populate: true
         cleanup: true
@@ -37,5 +37,5 @@ modules:
         dbName: wpgraphql_jwt_auth_serve
         dbHost: 127.0.0.1
         dbUser: root
-        dbPassword: jbutt#123
+        dbPassword: ''
         configFile: "tests/_data/config.php"

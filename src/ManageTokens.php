@@ -275,7 +275,7 @@ class ManageTokens {
 			 * If the tokens can be generated (not revoked, etc), return them
 			 */
 			if ( ! empty( $auth_token ) && ! is_wp_error( $auth_token ) ) {
-				$headers['X-jwt-auth-token'] = $auth_token;
+				$headers['X-JWT-Auth'] = $auth_token;
 			}
 
 		}
@@ -287,7 +287,7 @@ class ManageTokens {
 			$refresh_token = Auth::get_refresh_token( new \WP_User( $validate_auth_header->data->user->id ), false );
 
 			if ( ! empty( $refresh_token ) && ! is_wp_error( $refresh_token ) ) {
-				$headers['X-jwt-refresh-token'] = $refresh_token;
+				$headers['X-JWT-Refresh'] = $refresh_token;
 			}
 
 		}
