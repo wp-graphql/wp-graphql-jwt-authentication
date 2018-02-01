@@ -129,7 +129,7 @@ class Auth {
 		/**
 		 * Only allow the currently signed in user access to a JWT token
 		 */
-		if ( true === $cap_check && wp_get_current_user()->ID !== $user->ID || 0 === $user->ID ) {
+		if ( true === $cap_check && get_current_user_id() !== $user->ID || 0 === $user->ID ) {
 			return new \WP_Error( 'graphql-jwt-no-permissions', __( 'Only the user requesting a token can get a token issued for them', 'wp-graphql-jwt-authentication' ) );
 		}
 
@@ -213,10 +213,10 @@ class Auth {
 		$capability = apply_filters( 'graphql_jwt_auth_edit_users_capability', 'edit_users', $user_id );
 
 		/**
-		 * If the request is not from the current_user and the current_user doesn't have the proper capabilities, don't return the secret
+		 * If the request is not from the current_user or the current_user doesn't have the proper capabilities, don't return the secret
 		 */
-		$is_current_user = ( $user_id === wp_get_current_user()->ID ) ? true : false;
-		if ( ! $is_current_user && ! current_user_can( $capability ) ) {
+		$is_current_user = ( $user_id === get_current_user_id() ) ? true : false;
+		if ( ! $is_current_user || ! current_user_can( $capability ) ) {
 			return new \WP_Error( 'graphql-jwt-improper-capabilities', __( 'The JWT Auth secret for this user cannot be returned', 'wp-graphql-jwt-authentication' ) );
 		}
 
@@ -422,7 +422,7 @@ class Auth {
 			0 !== get_user_by( 'id', $user_id )->ID &&
 			(
 				current_user_can( $capability ) ||
-				$user_id === wp_get_current_user()->ID
+				$user_id === get_current_user_id()
 			)
 		) {
 
@@ -625,7 +625,7 @@ class Auth {
 		/**
 		 * Check to see if the incoming request has a "Refresh-Authorization" header
 		 */
-		$refresh_header = isset( $_SERVER['HTTP_REFRESH_AUTHORIZATION'] ) ? $_SERVER['HTTP_REFRESH_AUTHORIZATION'] : false;
+		$refresh_header = isset( $_SERVER['HTTP_REFRESH_AUTHORIZATION'] ) ? sanitize_text_field( $_SERVER['HTTP_REFRESH_AUTHORIZATION'] ) : false;
 
 		return apply_filters( 'graphql_jwt_auth_get_refresh_header', $refresh_header );
 
