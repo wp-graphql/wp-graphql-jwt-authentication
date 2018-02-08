@@ -297,6 +297,8 @@ class Auth {
 
 	public static function get_refresh_token( $user, $cap_check = true ) {
 
+		self::$is_refresh_token = true;
+
 		/**
 		 * Filter the token signature for refresh tokens, adding the user_secret to the signature and making the
 		 * expiration long lived so that the token can be used for a long time without the client having to store a new
@@ -304,7 +306,7 @@ class Auth {
 		 */
 		add_filter( 'graphql_jwt_auth_token_before_sign', function( $token, \WP_User $user ) {
 			$secret = Auth::get_user_jwt_secret( $user->ID );
-			if ( ! empty( $secret ) && ! is_wp_error( $secret ) ) {
+			if ( ! empty( $secret ) && ! is_wp_error( $secret ) && true === self::is_refresh_token() ) {
 
 				/**
 				 * Set the expiration date as a year from now to make the refresh token long lived, allowing the
@@ -313,6 +315,9 @@ class Auth {
 				 */
 				$token['exp']                         = apply_filters( 'graphql_jwt_auth_refresh_token_expiration', ( self::get_token_issued() + ( DAY_IN_SECONDS * 365 ) ) );
 				$token['data']['user']['user_secret'] = $secret;
+
+				self::$is_refresh_token = false;
+
 			}
 
 			return $token;
