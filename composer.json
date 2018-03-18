@@ -3,7 +3,7 @@
   "description": "JWT Authentication for WPGraphQL",
   "type": "wordpress-plugin",
   "version": "0.3.0",
-  "license": "GPLv3",
+  "license": "GPL-3.0+",
   "authors": [
     {
       "name": "jasonbahl",
