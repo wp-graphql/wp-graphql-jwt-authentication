@@ -33,7 +33,7 @@ modules:
         tablePrefix: 'wp_'
       WPLoader:
         loadOnly: true
-        wpRootFolder: /tmp/wordpress
+        wpRootFolder: /tmp/wp-graphql-jwt-authentication
         dbName: wpgraphql_jwt_auth_serve
         dbHost: 127.0.0.1
         dbUser: root
