@@ -7,7 +7,7 @@
  * Author URI: https://www.wpgraphql.com
  * Text Domain: wp-graphql-jwt-authentication-jwt-authentication
  * Domain Path: /languages
- * Version: 0.3.0
+ * Version: 0.3.1
  * Requires at least: 4.7.0
  * Tested up to: 4.8.3
  * Requires PHP: 5.5
@@ -117,7 +117,7 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 
 			// Plugin version.
 			if ( ! defined( 'WPGRAPHQL_JWT_AUTHENTICATION_VERSION' ) ) {
-				define( 'WPGRAPHQL_JWT_AUTHENTICATION_VERSION', '0.3.0' );
+				define( 'WPGRAPHQL_JWT_AUTHENTICATION_VERSION', '0.3.1' );
 			}
 
 			// Plugin Folder Path.
@@ -170,6 +170,14 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 			ManageTokens::init();
 
 			/**
+			 * Filter how WordPress determines the current user
+			 */
+			add_filter( 'determine_current_user', [
+				'\WPGraphQL\JWT_Authentication\Auth',
+				'filter_determine_current_user'
+			], 10, 1 );
+
+			/**
 			 * Filter the rootMutation fields
 			 */
 			add_filter( 'graphql_rootMutation_fields', [
@@ -182,13 +190,7 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 				'root_mutation_fields'
 			], 10, 1 );
 
-			/**
-			 * Filter how WordPress determines the current user
-			 */
-			add_filter( 'determine_current_user', [
-				'\WPGraphQL\JWT_Authentication\Auth',
-				'filter_determine_current_user'
-			], 10 );
+
 
 		}
 
@@ -200,4 +202,4 @@ function init() {
 	return JWT_Authentication::instance();
 }
 
-add_action( 'graphql_init', '\WPGraphQL\JWT_Authentication\init' );
+add_action( 'plugins_loaded', '\WPGraphQL\JWT_Authentication\init' );
