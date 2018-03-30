@@ -394,12 +394,14 @@ class Auth {
 			 */
 			$user = ! empty( $token ) && ! empty( $token->data->user->id ) ? $token->data->user->id : $user;
 
+
 		}
+
 
 		/**
 		 * Everything is ok, return the user ID stored in the token
 		 */
-		return $user;
+		return absint( $user );
 	}
 
 	/**

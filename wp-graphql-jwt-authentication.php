@@ -170,6 +170,14 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 			ManageTokens::init();
 
 			/**
+			 * Filter how WordPress determines the current user
+			 */
+			add_filter( 'determine_current_user', [
+				'\WPGraphQL\JWT_Authentication\Auth',
+				'filter_determine_current_user'
+			], 10, 1 );
+
+			/**
 			 * Filter the rootMutation fields
 			 */
 			add_filter( 'graphql_rootMutation_fields', [
@@ -182,13 +190,7 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 				'root_mutation_fields'
 			], 10, 1 );
 
-			/**
-			 * Filter how WordPress determines the current user
-			 */
-			add_filter( 'determine_current_user', [
-				'\WPGraphQL\JWT_Authentication\Auth',
-				'filter_determine_current_user'
-			], 10 );
+
 
 		}
 
@@ -200,4 +202,4 @@ function init() {
 	return JWT_Authentication::instance();
 }
 
-add_action( 'graphql_init', '\WPGraphQL\JWT_Authentication\init' );
+add_action( 'plugins_loaded', '\WPGraphQL\JWT_Authentication\init' );
