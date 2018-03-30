@@ -10,7 +10,7 @@ modules:
     config:
         WPLoader:
             wpRootFolder: "/tmp/wp-graphql-jwt-authentication"
-            dbName: "wptests"
+            dbName: "wordpress_test"
             dbHost: "127.0.0.1"
             dbUser: "root"
             dbPassword: ""
