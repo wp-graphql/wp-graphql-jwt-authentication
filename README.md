@@ -33,6 +33,12 @@ add_filter( 'graphql_jwt_auth_secret_key', function() {
 });
 ```
 
+If you are using Apache to run Wordpress you should add this to your .htaccess in order to enable Authorization header in your project
+
+```
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+```
+
 This secret is used in the encoding and decoding of the JWT token. If the Secret were ever changed on the server, ALL tokens that were generated with the previous Secret would become invalid. So, if you wanted to invalidate all user tokens, you can change the Secret on the server and _all_ previously issued tokens would become invalid and require users to re-authenticate.
 
 - Learn more about JWT: https://jwt.io/introduction/
