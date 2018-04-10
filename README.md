@@ -33,15 +33,21 @@ add_filter( 'graphql_jwt_auth_secret_key', function() {
 });
 ```
 
-If you are using Apache to run Wordpress you should add this to your .htaccess in order to enable Authorization header in your project
+This secret is used in the encoding and decoding of the JWT token. If the Secret were ever changed on the server, ALL tokens that were generated with the previous Secret would become invalid. So, if you wanted to invalidate all user tokens, you can change the Secret on the server and _all_ previously issued tokens would become invalid and require users to re-authenticate.
+
+- Learn more about JWT: https://jwt.io/introduction/
+
+## HTTP_AUTHORIZATION
+
+In order to use this plugin, your WordPress environment must support the HTTP_AUTHORIZATION header. In some cases, this header is not passed to WordPress because of some server configurations.
+
+Depending on your particular environment, you may have to research how to enable these headers, but in Apache, you can do the following in your `.htaccess`:
 
 ```
 SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
 ```
 
-This secret is used in the encoding and decoding of the JWT token. If the Secret were ever changed on the server, ALL tokens that were generated with the previous Secret would become invalid. So, if you wanted to invalidate all user tokens, you can change the Secret on the server and _all_ previously issued tokens would become invalid and require users to re-authenticate.
-
-- Learn more about JWT: https://jwt.io/introduction/
+For NGINX, this may work: https://serverfault.com/questions/511206/nginx-forward-http-auth-user#answer-511612
 
 ## How the plugin Works
 
