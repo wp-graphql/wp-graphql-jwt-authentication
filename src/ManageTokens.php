@@ -1,4 +1,5 @@
 <?php
+
 namespace WPGraphQL\JWT_Authentication;
 
 use GraphQL\Error\UserError;
@@ -52,10 +53,21 @@ class ManageTokens {
 			'\WPGraphQL\JWT_Authentication\ManageTokens',
 			'add_tokens_to_graphql_response_headers'
 		] );
+
+		add_filter( 'graphql_response_headers_to_send', [
+			'\WPGraphQL\JWT_Authentication\ManageTokens',
+			'add_auth_headers_to_response'
+		] );
+
+		add_filter( 'graphql_access_control_allow_headers', [
+			'\WPGraphQL\JWT_Authentication\ManageTokens',
+			'add_jwt_allowed_headers'
+		] );
 	}
 
 	/**
-	 * Filters the User type in the GraphQL Schema to provide fields for querying for user's jwtAuthToken and jwtUserSecret
+	 * Filters the User type in the GraphQL Schema to provide fields for querying for user's
+	 * jwtAuthToken and jwtUserSecret
 	 *
 	 * @param array $fields The fields for the User type in the GraphQL Schema
 	 *
@@ -64,9 +76,9 @@ class ManageTokens {
 	public static function add_user_fields( $fields ) {
 
 		$fields['jwtAuthToken'] = [
-			'type' => Types::string(),
+			'type'        => Types::string(),
 			'description' => __( 'A JWT token that can be used in future requests for authentication/authorization', 'wp-graphql-jwt-authentication' ),
-			'resolve' => function( \WP_User $user ) {
+			'resolve'     => function ( \WP_User $user ) {
 
 				/**
 				 * Get the token for the user
@@ -85,9 +97,9 @@ class ManageTokens {
 		];
 
 		$fields['jwtRefreshToken'] = [
-			'type' => Types::string(),
+			'type'        => Types::string(),
 			'description' => __( 'A JWT token that can be used in future requests to get a refreshed jwtAuthToken. If the refresh token used in a request is revoked or otherwise invalid, a valid Auth token will NOT be issued in the response headers.', 'wp-graphql-jwt-authentication' ),
-			'resolve' => function( \WP_User $user ) {
+			'resolve'     => function ( \WP_User $user ) {
 
 				/**
 				 * Get the token for the user
@@ -106,9 +118,9 @@ class ManageTokens {
 		];
 
 		$fields['jwtUserSecret'] = [
-			'type' => Types::string(),
+			'type'        => Types::string(),
 			'description' => __( 'A unique secret tied to the users JWT token that can be revoked or refreshed. Revoking the secret prevents JWT tokens from being issued to the user. Refreshing the token invalidates previously issued tokens, but allows new tokens to be issued.', 'wp-graphql' ),
-			'resolve' => function( \WP_User $user ) {
+			'resolve'     => function ( \WP_User $user ) {
 
 				/**
 				 * Get the user's JWT Secret
@@ -130,23 +142,24 @@ class ManageTokens {
 		];
 
 		$fields['jwtAuthExpiration'] = [
-			'type' => Types::string(),
+			'type'        => Types::string(),
 			'description' => __( 'The expiration for the JWT Token for the user. If not set custom for the user, it will use the default sitewide expiration setting', 'wp-graphql-jwt-authentication' ),
-			'resolve' => function( \WP_User $user ) {
+			'resolve'     => function ( \WP_User $user ) {
 				$expiration = Auth::get_token_expiration();
+
 				return ! empty( $expiration ) ? $expiration : null;
 			}
 		];
 
 		$fields['isJwtAuthSecretRevoked'] = [
-			'type' => Types::non_null( Types::boolean() ),
+			'type'        => Types::non_null( Types::boolean() ),
 			'description' => __( 'Whether the JWT User secret has been revoked. If the secret has been revoked, auth tokens will not be issued until an admin, or user with proper capabilities re-issues a secret for the user.', 'wp-graphql-jwt-authentication' ),
-			'resolve' => function( \WP_User $user ) {
+			'resolve'     => function ( \WP_User $user ) {
 				$revoked = Auth::is_jwt_secret_revoked( $user->ID );
+
 				return true == $revoked ? true : false;
 			}
 		];
-
 
 
 		return $fields;
@@ -155,6 +168,7 @@ class ManageTokens {
 
 	/**
 	 * Given an array of fields, this returns an array with the new fields added
+	 *
 	 * @param array $fields The input fields for user mutations
 	 *
 	 * @return array
@@ -162,12 +176,12 @@ class ManageTokens {
 	public static function add_user_mutation_input_fields( array $fields ) {
 
 		$fields['revokeJwtUserSecret'] = [
-			'type' => Types::boolean(),
+			'type'        => Types::boolean(),
 			'description' => __( 'If true, this will revoke the users JWT secret. If false, this will unrevoke the JWT secret AND issue a new one. To revoke, the user must have proper capabilities to edit users JWT secrets.', 'wp-graphql-jwt-authentication' ),
 		];
 
 		$fields['refreshJwtUserSecret'] = [
-			'type' => Types::boolean(),
+			'type'        => Types::boolean(),
 			'description' => __( 'If true, this will refresh the users JWT secret.' ),
 		];
 
@@ -175,8 +189,8 @@ class ManageTokens {
 	}
 
 	/**
-	 * @param int $user_id The ID of the user being mutated
-	 * @param array $input The input args of the GraphQL mutation request
+	 * @param int    $user_id       The ID of the user being mutated
+	 * @param array  $input         The input args of the GraphQL mutation request
 	 * @param string $mutation_name The name of the mutation
 	 */
 	public static function update_jwt_fields_during_mutation( $user_id, array $input, $mutation_name ) {
@@ -208,11 +222,11 @@ class ManageTokens {
 	 * This filters the token to prevent it from being issued if it has been revoked.
 	 *
 	 * @param string $token
-	 * @param int $user_id
+	 * @param int    $user_id
 	 *
 	 * @return string $token
 	 */
-	public static function prevent_token_from_returning_if_revoked( $token, $user_id  ) {
+	public static function prevent_token_from_returning_if_revoked( $token, $user_id ) {
 
 		/**
 		 * Check to see if the user's auth secret has been revoked.
@@ -254,6 +268,14 @@ class ManageTokens {
 
 	}
 
+	/**
+	 * Returns tokens in the response headers
+	 *
+	 * @param $headers
+	 *
+	 * @return mixed
+	 * @throws \Exception
+	 */
 	public static function add_tokens_to_graphql_response_headers( $headers ) {
 
 		/**
@@ -294,6 +316,34 @@ class ManageTokens {
 
 		return $headers;
 
+	}
+
+	/**
+	 * Expose the X-JWT-Refresh tokens in the response headers. This allows
+	 * folks to grab new refresh tokens from authenticated requests for subsequent use.
+	 *
+	 * @param array $headers The existing response headers
+	 *
+	 * @return array
+	 */
+	public static function add_auth_headers_to_response( array $headers ) {
+		$headers['Access-Control-Expose-Headers'] = 'X-JWT-Refresh';
+
+		return $headers;
+	}
+
+	/**
+	 * Expose the X-JWT-Auth and X-JWT-Refresh as allowed headers in GraphQL responses
+	 *
+	 * @param array $allowed_headers The existing allowed headers
+	 *
+	 * @return array
+	 */
+	public static function add_jwt_allowed_headers( array $allowed_headers ) {
+		$allowed_headers[] = 'X-JWT-Auth';
+		$allowed_headers[] = 'X-JWT-Refresh';
+
+		return $allowed_headers;
 	}
 
 }
