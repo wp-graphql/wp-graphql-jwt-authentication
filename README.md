@@ -58,11 +58,12 @@ This can be used like so:
 ```
 mutation LoginUser {
   login( input: {
-    login: "your_login"
+    clientMutationId:"uniqueId"
+    username: "your_login"
     password: "your password"
   } ) {
     authToken
-    user: {
+    user {
       id
       name
     }
