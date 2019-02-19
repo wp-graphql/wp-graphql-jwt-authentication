@@ -59,6 +59,20 @@ class ManageTokens {
 			'add_auth_headers_to_response'
 		] );
 
+		/**
+		 * Add Auth Headers to REST REQUEST responses
+		 *
+		 * This allows clients to use WPGraphQL JWT Authentication
+		 * tokens with WPGraphQL _and_ with REST API requests, and
+		 * this exposes refresh tokens in the REST API response
+		 * so folks can refresh their tokens after each REST API
+		 * request.
+		 */
+		add_filter( 'rest_request_after_callbacks', [
+			'\WPGraphQL\JWT_Authentication\ManageTokens',
+			'add_auth_headers_to_rest_response'
+		], 10, 3 );
+
 		add_filter( 'graphql_access_control_allow_headers', [
 			'\WPGraphQL\JWT_Authentication\ManageTokens',
 			'add_jwt_allowed_headers'
@@ -72,6 +86,7 @@ class ManageTokens {
 	 * @param array $fields The fields for the User type in the GraphQL Schema
 	 *
 	 * @return array $fields
+	 * @throws \Exception
 	 */
 	public static function add_user_fields( $fields ) {
 
@@ -316,6 +331,52 @@ class ManageTokens {
 
 		return $headers;
 
+	}
+
+	/**
+	 * Expose X-JWT-Refresh tokens in the response headers for REST requests.
+	 *
+	 * This allows clients the ability to Authenticate with WPGraphQL, use the token
+	 * with REST API Requests, but get new refresh tokens from the REST API Headers
+	 *
+	 * @return \WP_HTTP_Response
+	 * @throws \Exception
+	 */
+	public static function add_auth_headers_to_rest_response( \WP_HTTP_Response $response, $handler, $request ) {
+
+		/**
+		 * Note: The Access-Control-Expose-Headers aren't directly filterable
+		 * for REST API responses, so this overrides them altogether.
+		 *
+		 * This isn't ideal, as any other plugin could override as well.
+		 *
+		 * Might need a patch to core to allow for individual filtering.
+		 */
+		$response->set_headers( [
+			'Access-Control-Expose-Headers' => 'X-WP-Total, X-WP-TotalPages, X-JWT-Refresh',
+		] );
+
+		$refresh_token = null;
+
+		$validate_auth_header = Auth::validate_token( str_ireplace( 'Bearer ', '', Auth::get_auth_header() ), false );
+
+		if ( ! is_wp_error( $validate_auth_header ) && ! empty( $validate_auth_header->data->user->id ) ) {
+
+			$refresh_token = Auth::get_refresh_token( new \WP_User( $validate_auth_header->data->user->id ), false );
+
+			if ( ! empty( $refresh_token ) && ! is_wp_error( $refresh_token ) ) {
+				$headers['X-JWT-Refresh'] = $refresh_token;
+			}
+
+		}
+
+		if ( $refresh_token ) {
+			$response->set_headers( [
+				'X-JWT-Refresh' => $refresh_token,
+			] );
+		}
+
+		return $response;
 	}
 
 	/**
