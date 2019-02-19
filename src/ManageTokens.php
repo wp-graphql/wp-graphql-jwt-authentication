@@ -364,10 +364,6 @@ class ManageTokens {
 
 			$refresh_token = Auth::get_refresh_token( new \WP_User( $validate_auth_header->data->user->id ), false );
 
-			if ( ! empty( $refresh_token ) && ! is_wp_error( $refresh_token ) ) {
-				$headers['X-JWT-Refresh'] = $refresh_token;
-			}
-
 		}
 
 		if ( $refresh_token ) {
