@@ -293,6 +293,20 @@ class ManageTokens {
 	 */
 	public static function add_tokens_to_graphql_response_headers( $headers ) {
 
+		$should_return_tokens = false;
+
+		/**
+		 * If the request _is_ SSL, or GRAPHQL_DEBUG is defined, return the tokens
+		 * otherwise do not return them.
+		 */
+		if ( is_ssl() || defined( 'GRAPHQL_DEBUG' ) && true !== GRAPHQL_DEBUG ) {
+			$should_return_tokens = true;
+		}
+
+		if ( ! $should_return_tokens ) {
+			return $headers;
+		}
+
 		/**
 		 * If there's a Refresh-Authorization token in the request headers, validate it
 		 */
@@ -343,6 +357,20 @@ class ManageTokens {
 	 * @throws \Exception
 	 */
 	public static function add_auth_headers_to_rest_response( \WP_HTTP_Response $response, $handler, $request ) {
+
+		$should_return_tokens = false;
+
+		/**
+		 * If the request _is_ SSL, or GRAPHQL_DEBUG is defined, return the tokens
+		 * otherwise do not return them.
+		 */
+		if ( is_ssl() || defined( 'GRAPHQL_DEBUG' ) && true !== GRAPHQL_DEBUG ) {
+			$should_return_tokens = true;
+		}
+
+		if ( ! $should_return_tokens ) {
+			return $response;
+		}
 
 		/**
 		 * Note: The Access-Control-Expose-Headers aren't directly filterable
