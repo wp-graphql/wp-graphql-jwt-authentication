@@ -41,14 +41,6 @@ class ManageTokens {
 			'prevent_token_from_returning_if_revoked'
 		], 10, 2 );
 
-		/**
-		 * Filter the expiration to use the user's expiration if a custom expiration has been set.
-		 */
-		add_filter( 'graphql_jwt_auth_expire', [
-			'\WPGraphQL\JWT_Authentication\ManageTokens',
-			'use_custom_user_expiration'
-		] );
-
 		add_filter( 'graphql_response_headers_to_send', [
 			'\WPGraphQL\JWT_Authentication\ManageTokens',
 			'add_tokens_to_graphql_response_headers'
@@ -256,30 +248,6 @@ class ManageTokens {
 		}
 
 		return $token;
-
-	}
-
-
-	public static function use_custom_user_expiration( $expiration ) {
-
-		$user = wp_get_current_user();
-
-		/**
-		 * If there is no current user set or the current user's secret has been revoked, return null
-		 */
-		if ( 0 === $user->ID || Auth::is_jwt_secret_revoked( $user->ID ) ) {
-			return null;
-		}
-
-		/**
-		 * If the user has custom expiration configured, use it
-		 */
-		$user_expiration = get_user_meta( $user->ID, 'graphql_jwt_custom_expiration', true );
-		if ( ! empty( $user_expiration ) && is_string( $user_expiration ) ) {
-			$expiration = $user_expiration;
-		}
-
-		return $expiration;
 
 	}
 
