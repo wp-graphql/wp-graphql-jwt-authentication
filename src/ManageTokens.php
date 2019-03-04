@@ -318,8 +318,12 @@ class ManageTokens {
 	 * @return \WP_HTTP_Response
 	 * @throws \Exception
 	 */
-	public static function add_auth_headers_to_rest_response( \WP_HTTP_Response $response, $handler, $request ) {
-
+	public static function add_auth_headers_to_rest_response( $response, $handler, $request ) {
+		
+		if( ! $response instanceof \WP_HTTP_Response ) {
+			return $response;
+		}
+		
 		/**
 		 * If the request _is_ SSL, or GRAPHQL_DEBUG is defined, return the tokens
 		 * otherwise do not return them.
