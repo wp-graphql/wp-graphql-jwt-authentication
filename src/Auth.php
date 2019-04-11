@@ -70,7 +70,7 @@ class Auth {
 		$response = [
 			'authToken'    => self::get_signed_token( $user ),
 			'refreshToken' => self::get_refresh_token( $user ),
-			'user'         => DataSource::resolve_user( $user->data->ID ),
+			'user'         => DataSource::resolve_user( $user->data->ID, \WPGraphQL::get_app_context() ),
 		];
 
 		/**
