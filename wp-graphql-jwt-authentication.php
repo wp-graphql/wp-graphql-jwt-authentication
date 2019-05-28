@@ -202,4 +202,4 @@ function init() {
 	return JWT_Authentication::instance();
 }
 
-add_action( 'plugins_loaded', '\WPGraphQL\JWT_Authentication\init' );
+add_action( 'plugins_loaded', '\WPGraphQL\JWT_Authentication\init', 9 );
