@@ -616,7 +616,7 @@ class Auth {
 		/**
 		 * If the $auth header is set, use it. Otherwise attempt to use the $redirect_auth header
 		 */
-		$auth_header = isset( $auth_header ) ? $auth_header : ( isset( $redirect_auth_header ) ? $redirect_auth_header : null );
+		$auth_header = $auth_header !== false ? $auth_header : ( $redirect_auth_header !== false ? $redirect_auth_header : null );
 
 		/**
 		 * Return the auth header, pass through a filter
