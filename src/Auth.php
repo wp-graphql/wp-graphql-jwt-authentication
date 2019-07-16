@@ -561,7 +561,7 @@ class Auth {
 			/**
 			 * The Token is decoded now validate the iss
 			 */
-			if ( get_bloginfo( 'url' ) !== $token->iss ) {
+			if ( ! isset( $token->iss ) || get_bloginfo( 'url' ) !== $token->iss ) {
 				throw new \Exception( __( 'The iss do not match with this server', 'wp-graphql-jwt-authentication' ) );
 			}
 

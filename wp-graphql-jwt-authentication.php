@@ -166,19 +166,10 @@ if ( ! class_exists( '\WPGraphQL\JWT_Auth' ) ) :
 		 */
 		private static function init() {
 
-
 			/**
 			 * Initialize the GraphQL fields for managing tokens
 			 */
 			ManageTokens::init();
-
-			/**
-			 * Filter how WordPress determines the current user
-			 */
-			add_filter( 'determine_current_user', [
-				'\WPGraphQL\JWT_Authentication\Auth',
-				'filter_determine_current_user'
-			], 1, 1 );
 
 			/**
 			 * Filter the rootMutation fields
