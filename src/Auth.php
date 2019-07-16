@@ -364,6 +364,7 @@ class Auth {
 	 * @param (int|bool) $user Logged User ID
 	 *
 	 * @return mixed|false|\WP_User
+	 * @throws \Exception
 	 */
 	public static function filter_determine_current_user( $user ) {
 

@@ -17,9 +17,12 @@
  * @package         WPGraphQL_JWT_Authentication
  */
 
-namespace WPGraphQL\JWT_Authentication;
+namespace WPGraphQL\JWT_Auth;
 
 // If this file is called directly, abort.
+use WPGraphQL\JWT_Authentication\Auth;
+use WPGraphQL\JWT_Authentication\ManageTokens;
+
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
@@ -33,7 +36,7 @@ if ( file_exists( __DIR__ . '/c3.php' ) ) {
 	require_once( 'c3.php' );
 }
 
-if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
+if ( ! class_exists( '\WPGraphQL\JWT_Auth' ) ) :
 
 	final class JWT_Authentication {
 
@@ -175,7 +178,7 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 			add_filter( 'determine_current_user', [
 				'\WPGraphQL\JWT_Authentication\Auth',
 				'filter_determine_current_user'
-			], 10, 1 );
+			], 1, 1 );
 
 			/**
 			 * Filter the rootMutation fields
@@ -202,4 +205,43 @@ function init() {
 	return JWT_Authentication::instance();
 }
 
-add_action( 'plugins_loaded', '\WPGraphQL\JWT_Authentication\init' );
+add_action( 'plugins_loaded', '\WPGraphQL\JWT_Auth\init', 1 );
+
+add_filter( 'determine_current_user', function( $user ) {
+
+	/**
+	 * Validate the token, which will check the Headers to see if Authentication headers were sent
+	 *
+	 * @since 0.0.1
+	 */
+	$token = Auth::validate_token();
+
+	/**
+	 * If no token was generated, return the existing value for the $user
+	 */
+	if ( empty( $token ) ) {
+
+		/**
+		 * Return the user that was passed in to the filter
+		 */
+		return $user;
+
+		/**
+		 * If there is a token
+		 */
+	} else {
+
+		/**
+		 * Get the current user from the token
+		 */
+		$user = ! empty( $token ) && ! empty( $token->data->user->id ) ? $token->data->user->id : $user;
+
+
+	}
+
+
+	/**
+	 * Everything is ok, return the user ID stored in the token
+	 */
+	return absint( $user );
+} );
