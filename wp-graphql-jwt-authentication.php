@@ -198,16 +198,8 @@ function init() {
 
 add_action( 'plugins_loaded', '\WPGraphQL\JWT_Auth\init', 1 );
 
-add_filter( 'determine_current_user', function( $user ) {
 
-	/**
-	 * Bail if it's not a GraphQL HTTP Request
-	 *
-	 * @todo: consider supporting REST too?
-	 */
-	if ( ! defined( 'GRAPHQL_HTTP_REQUEST' ) || false === GRAPHQL_HTTP_REQUEST ) {
-		return $user;
-	}
+add_filter( 'determine_current_user', function( $user ) {
 
 	/**
 	 * Validate the token, which will check the Headers to see if Authentication headers were sent
@@ -219,7 +211,7 @@ add_filter( 'determine_current_user', function( $user ) {
 	/**
 	 * If no token was generated, return the existing value for the $user
 	 */
-	if ( empty( $token ) ) {
+	if ( empty( $token ) || is_wp_error( $token ) ) {
 
 		/**
 		 * Return the user that was passed in to the filter
@@ -239,9 +231,8 @@ add_filter( 'determine_current_user', function( $user ) {
 
 	}
 
-
 	/**
 	 * Everything is ok, return the user ID stored in the token
 	 */
 	return absint( $user );
-} );
+}, 99, 1 );
