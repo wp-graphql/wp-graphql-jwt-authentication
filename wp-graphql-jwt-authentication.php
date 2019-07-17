@@ -201,6 +201,15 @@ add_action( 'plugins_loaded', '\WPGraphQL\JWT_Auth\init', 1 );
 add_filter( 'determine_current_user', function( $user ) {
 
 	/**
+	 * Bail if it's not a GraphQL HTTP Request
+	 *
+	 * @todo: consider supporting REST too?
+	 */
+	if ( ! defined( 'GRAPHQL_HTTP_REQUEST' ) || false === GRAPHQL_HTTP_REQUEST ) {
+		return $user;
+	}
+
+	/**
 	 * Validate the token, which will check the Headers to see if Authentication headers were sent
 	 *
 	 * @since 0.0.1
