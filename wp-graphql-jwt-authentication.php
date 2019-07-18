@@ -172,6 +172,14 @@ if ( ! class_exists( '\WPGraphQL\JWT_Auth' ) ) :
 			ManageTokens::init();
 
 			/**
+			 * Filter how WordPress determines the current user
+			 */
+			add_filter( 'determine_current_user', [
+				'\WPGraphQL\JWT_Authentication\Auth',
+				'filter_determine_current_user'
+			], 99, 1 );
+
+			/**
 			 * Filter the rootMutation fields
 			 */
 			add_filter( 'graphql_rootMutation_fields', [
@@ -197,42 +205,3 @@ function init() {
 }
 
 add_action( 'plugins_loaded', '\WPGraphQL\JWT_Auth\init', 1 );
-
-
-add_filter( 'determine_current_user', function( $user ) {
-
-	/**
-	 * Validate the token, which will check the Headers to see if Authentication headers were sent
-	 *
-	 * @since 0.0.1
-	 */
-	$token = Auth::validate_token();
-
-	/**
-	 * If no token was generated, return the existing value for the $user
-	 */
-	if ( empty( $token ) || is_wp_error( $token ) ) {
-
-		/**
-		 * Return the user that was passed in to the filter
-		 */
-		return $user;
-
-		/**
-		 * If there is a token
-		 */
-	} else {
-
-		/**
-		 * Get the current user from the token
-		 */
-		$user = ! empty( $token ) && ! empty( $token->data->user->id ) ? $token->data->user->id : $user;
-
-
-	}
-
-	/**
-	 * Everything is ok, return the user ID stored in the token
-	 */
-	return absint( $user );
-}, 99, 1 );

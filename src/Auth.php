@@ -378,7 +378,7 @@ class Auth {
 		/**
 		 * If no token was generated, return the existing value for the $user
 		 */
-		if ( empty( $token ) ) {
+		if ( empty( $token ) || is_wp_error( $token ) ) {
 
 			/**
 			 * Return the user that was passed in to the filter
@@ -397,7 +397,6 @@ class Auth {
 
 
 		}
-
 
 		/**
 		 * Everything is ok, return the user ID stored in the token
@@ -488,6 +487,7 @@ class Auth {
 		}
 
 	}
+
 
 	protected static function set_status( $status_code ) {
 		add_filter( 'graphql_response_status_code', function() use ( $status_code ) {
