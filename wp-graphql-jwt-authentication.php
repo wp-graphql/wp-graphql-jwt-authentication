@@ -17,12 +17,9 @@
  * @package         WPGraphQL_JWT_Authentication
  */
 
-namespace WPGraphQL\JWT_Auth;
+namespace WPGraphQL\JWT_Authentication;
 
 // If this file is called directly, abort.
-use WPGraphQL\JWT_Authentication\Auth;
-use WPGraphQL\JWT_Authentication\ManageTokens;
-
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
@@ -36,7 +33,7 @@ if ( file_exists( __DIR__ . '/c3.php' ) ) {
 	require_once( 'c3.php' );
 }
 
-if ( ! class_exists( '\WPGraphQL\JWT_Auth' ) ) :
+if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 
 	final class JWT_Authentication {
 
@@ -204,4 +201,4 @@ function init() {
 	return JWT_Authentication::instance();
 }
 
-add_action( 'plugins_loaded', '\WPGraphQL\JWT_Auth\init', 1 );
+add_action( 'plugins_loaded', '\WPGraphQL\JWT_Authentication\init', 1 );
