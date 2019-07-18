@@ -3,6 +3,7 @@
 namespace WPGraphQL\JWT_Authentication;
 
 use GraphQL\Error\UserError;
+use WPGraphQL\Model\User;
 use WPGraphQL\Types;
 
 class ManageTokens {
@@ -85,7 +86,9 @@ class ManageTokens {
 		$fields['jwtAuthToken'] = [
 			'type'        => Types::string(),
 			'description' => __( 'A JWT token that can be used in future requests for authentication/authorization', 'wp-graphql-jwt-authentication' ),
-			'resolve'     => function ( \WP_User $user ) {
+			'resolve'     => function ( User $user ) {
+
+				$user = get_user_by( 'id', $user->userId );
 
 				/**
 				 * Get the token for the user
@@ -106,7 +109,9 @@ class ManageTokens {
 		$fields['jwtRefreshToken'] = [
 			'type'        => Types::string(),
 			'description' => __( 'A JWT token that can be used in future requests to get a refreshed jwtAuthToken. If the refresh token used in a request is revoked or otherwise invalid, a valid Auth token will NOT be issued in the response headers.', 'wp-graphql-jwt-authentication' ),
-			'resolve'     => function ( \WP_User $user ) {
+			'resolve'     => function ( User $user ) {
+
+				$user = get_user_by( 'id', $user->userId );
 
 				/**
 				 * Get the token for the user
@@ -127,12 +132,12 @@ class ManageTokens {
 		$fields['jwtUserSecret'] = [
 			'type'        => Types::string(),
 			'description' => __( 'A unique secret tied to the users JWT token that can be revoked or refreshed. Revoking the secret prevents JWT tokens from being issued to the user. Refreshing the token invalidates previously issued tokens, but allows new tokens to be issued.', 'wp-graphql' ),
-			'resolve'     => function ( \WP_User $user ) {
+			'resolve'     => function ( User $user ) {
 
 				/**
 				 * Get the user's JWT Secret
 				 */
-				$secret = Auth::get_user_jwt_secret( $user->ID );
+				$secret = Auth::get_user_jwt_secret( $user->userId );
 
 				/**
 				 * If the secret cannot be returned, throw an error
@@ -319,11 +324,11 @@ class ManageTokens {
 	 * @throws \Exception
 	 */
 	public static function add_auth_headers_to_rest_response( $response, $handler, $request ) {
-		
+
 		if( ! $response instanceof \WP_HTTP_Response ) {
 			return $response;
 		}
-		
+
 		/**
 		 * If the request _is_ SSL, or GRAPHQL_DEBUG is defined, return the tokens
 		 * otherwise do not return them.
