@@ -163,7 +163,6 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 		 */
 		private static function init() {
 
-
 			/**
 			 * Initialize the GraphQL fields for managing tokens
 			 */
@@ -175,7 +174,7 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 			add_filter( 'determine_current_user', [
 				'\WPGraphQL\JWT_Authentication\Auth',
 				'filter_determine_current_user'
-			], 10, 1 );
+			], 99, 1 );
 
 			/**
 			 * Filter the rootMutation fields
@@ -202,4 +201,4 @@ function init() {
 	return JWT_Authentication::instance();
 }
 
-add_action( 'plugins_loaded', '\WPGraphQL\JWT_Authentication\init' );
+add_action( 'plugins_loaded', '\WPGraphQL\JWT_Authentication\init', 1 );
