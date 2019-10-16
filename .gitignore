@@ -14,3 +14,5 @@ vendor/*
 c3.php
 !/tests
 /tests/*.suite.yml
+.env
+.codeception.yml

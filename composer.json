@@ -14,10 +14,7 @@
     "firebase/php-jwt": "^4.0"
   },
   "require-dev": {
-    "satooshi/php-coveralls": "~1.0",
-    "lucatume/wp-browser": "^1.21",
-    "codeception/c3": "2.*",
-    "phpunit/phpcov": "^4.0"
+    "lucatume/wp-browser": ">=2.2.1 <2.2.8"
   },
   "config": {
     "optimize-autoloader": true

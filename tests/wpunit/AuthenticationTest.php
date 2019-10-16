@@ -83,34 +83,6 @@ class AuthenticationTest extends \Codeception\TestCase\WPTestCase {
 
 	}
 
-	public function testLoginWithNoSecretKeyConfigured() {
-
-		/**
-		 * Set the secret key to be empty
-		 * which should throw an error
-		 */
-		add_filter( 'graphql_jwt_auth_secret_key', function() {
-			return null;
-		} );
-
-		/**
-		 * Run the GraphQL query
-		 */
-		$actual = do_graphql_request( $this->login_mutation, 'LoginUser', [
-			'input' => [
-				'username' => 'testuser',
-				'password' => 'testPassword',
-				'clientMutationId' => uniqid(),
-			]
-		] );
-
-		/**
-		 * Assert that a bad password will throw an error
-		 */
-		$this->assertArrayHasKey( 'errors', $actual );
-
-	}
-
 	/**
 	 * testPageNodeQuery
 	 * @since 0.0.5
@@ -149,6 +121,8 @@ class AuthenticationTest extends \Codeception\TestCase\WPTestCase {
 			]
 		] );
 
+		codecept_debug( $actual );
+
 		/**
 		 * Establish the expectation for the output of the query
 		 */
@@ -170,6 +144,34 @@ class AuthenticationTest extends \Codeception\TestCase\WPTestCase {
 		$token = $actual['data']['login']['authToken'];
 		$this->assertNotEmpty( $token );
 		$this->assertEquals( $expected_user, $actual['data']['login']['user'] );
+
+	}
+
+	public function testLoginWithNoSecretKeyConfigured() {
+
+		/**
+		 * Set the secret key to be empty
+		 * which should throw an error
+		 */
+		add_filter( 'graphql_jwt_auth_secret_key', function() {
+			return null;
+		} );
+
+		/**
+		 * Run the GraphQL query
+		 */
+		$actual = do_graphql_request( $this->login_mutation, 'LoginUser', [
+			'input' => [
+				'username' => 'testuser',
+				'password' => 'testPassword',
+				'clientMutationId' => uniqid(),
+			]
+		] );
+
+		/**
+		 * Assert that a bad password will throw an error
+		 */
+		$this->assertArrayHasKey( 'errors', $actual );
 
 	}
 

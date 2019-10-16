@@ -177,12 +177,12 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 			], 99, 1 );
 
 			/**
-			 * Filter the rootMutation fields
+			 * Register the login mutation to the Schema
 			 */
-			add_filter( 'graphql_rootMutation_fields', [
+			add_action( 'graphql_register_types', [
 				'\WPGraphQL\JWT_Authentication\Login',
-				'root_mutation_fields'
-			], 10, 1 );
+				'register_mutation'
+			], 10 );
 
 			add_filter( 'graphql_rootMutation_fields', [
 				'\WPGraphQL\JWT_Authentication\RefreshToken',
