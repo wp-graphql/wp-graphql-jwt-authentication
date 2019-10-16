@@ -156,7 +156,7 @@ class ManageTokens {
 		$fields['jwtAuthExpiration'] = [
 			'type'        => Types::string(),
 			'description' => __( 'The expiration for the JWT Token for the user. If not set custom for the user, it will use the default sitewide expiration setting', 'wp-graphql-jwt-authentication' ),
-			'resolve'     => function ( \WP_User $user ) {
+			'resolve'     => function () {
 				$expiration = Auth::get_token_expiration();
 
 				return ! empty( $expiration ) ? $expiration : null;
@@ -166,7 +166,7 @@ class ManageTokens {
 		$fields['isJwtAuthSecretRevoked'] = [
 			'type'        => Types::non_null( Types::boolean() ),
 			'description' => __( 'Whether the JWT User secret has been revoked. If the secret has been revoked, auth tokens will not be issued until an admin, or user with proper capabilities re-issues a secret for the user.', 'wp-graphql-jwt-authentication' ),
-			'resolve'     => function ( \WP_User $user ) {
+			'resolve'     => function ( User $user ) {
 				$revoked = Auth::is_jwt_secret_revoked( $user->ID );
 
 				return true == $revoked ? true : false;
