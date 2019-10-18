@@ -69,4 +69,3 @@ modules:
             title: 'Test'
             plugins: ['wp-graphql/wp-graphql.php', 'wp-graphql-jwt-authentication/wp-graphql-jwt-authentication.php']
             activatePlugins: ['wp-graphql/wp-graphql.php', 'wp-graphql-jwt-authentication/wp-graphql-jwt-authentication.php', ]
-            configFile: 'tests/_data/config.php'

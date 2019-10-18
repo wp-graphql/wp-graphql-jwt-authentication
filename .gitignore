@@ -16,3 +16,4 @@ c3.php
 /tests/*.suite.yml
 .env
 .codeception.yml
+composer.lock
