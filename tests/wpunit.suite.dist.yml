@@ -7,17 +7,3 @@ modules:
     enabled:
         - WPLoader
         - \Helper\Wpunit
-    config:
-        WPLoader:
-            wpRootFolder: "/tmp/wp-graphql-jwt-authentication"
-            dbName: "wordpress_test"
-            dbHost: "127.0.0.1"
-            dbUser: "root"
-            dbPassword: ""
-            tablePrefix: "wp_"
-            domain: "wp.localhost"
-            adminEmail: "admin@wp.localhost"
-            title: "Test"
-            plugins: ['wp-graphql/wp-graphql.php', 'wp-graphql-jwt-authentication/wp-graphql-jwt-authentication.php']
-            activatePlugins: ['wp-graphql/wp-graphql.php', 'wp-graphql-jwt-authentication/wp-graphql-jwt-authentication.php']
-            configFile: "tests/_data/config.php"

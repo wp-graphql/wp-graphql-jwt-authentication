@@ -1,21 +1,42 @@
 #!/usr/bin/env bash
 
-if [ $# -lt 3 ]; then
-	echo "usage: $0 <db-name> <db-user> <db-pass> [db-host] [wp-version] [skip-database-creation]"
+source .env
+
+print_usage_instruction() {
+	echo "Ensure that .env file exist in project root directory exists."
+	echo "And run the following 'composer install-wp-tests' in the project root directory"
 	exit 1
+}
+
+if [[ -z "$TEST_DB_NAME" ]]; then
+	echo "TEST_DB_NAME not found"
+	print_usage_instruction
+else
+	DB_NAME=$TEST_DB_NAME
+fi
+if [[ -z "$TEST_DB_USER" ]]; then
+	echo "TEST_DB_USER not found"
+	print_usage_instruction
+else
+	DB_USER=$TEST_DB_USER
+fi
+if [[ -z "$TEST_DB_PASSWORD" ]]; then
+	DB_PASS=""
+else
+	DB_PASS=$TEST_DB_PASSWORD
+fi
+if [[ -z "$TEST_DB_HOST" ]]; then
+	DB_HOST=localhost
+else
+	DB_HOST=$TEST_DB_HOST
+fi
+if [ -z "$SKIP_DB_CREATE" ]; then
+	SKIP_DB_CREATE=false
 fi
 
-DB_NAME=$1
-DB_USER=$2
-DB_PASS=$3
-DB_HOST=${4-localhost}
-WP_VERSION=${5-latest}
-SKIP_DB_CREATE=${6-false}
-
 PLUGIN_DIR=$(pwd)
-WP_TESTS_DIR=${WP_TESTS_DIR-/tmp/wp-graphql-jwt-authentication}
-WP_CORE_DIR=${WP_CORE_DIR-/tmp/wp-graphql-jwt-authentication/}
-DB_SERVE_NAME=${DB_SERVE_NAME-wpgraphql_jwt_auth_serve}
+WP_TESTS_DIR=${WP_TESTS_DIR-/tmp/wp-graphql-jwt-authentication/wordpress-tests-lib}
+WP_CORE_DIR=${WP_CORE_DIR-/tmp/wp-graphql-jwt-authentication/wordpress/}
 
 download() {
     if [ `which curl` ]; then
@@ -93,7 +114,7 @@ install_test_suite() {
 		sed $ioption "s/youremptytestdbnamehere/$DB_NAME/" "$WP_TESTS_DIR"/wp-tests-config.php
 		sed $ioption "s/yourusernamehere/$DB_USER/" "$WP_TESTS_DIR"/wp-tests-config.php
 		sed $ioption "s/yourpasswordhere/$DB_PASS/" "$WP_TESTS_DIR"/wp-tests-config.php
-		sed $ioption "s|localhost|${DB_HOST}|" "$WP_TESTS_DIR"/wp-tests-config.php
+		sed $ioption "s|localhost|$DB_HOST|" "$WP_TESTS_DIR"/wp-tests-config.php
 	fi
 
 }
@@ -120,42 +141,35 @@ install_db() {
 		fi
 	fi
 
-
-    RESULT=`mysql -u $DB_USER --password="$DB_PASS" --skip-column-names -e "SHOW DATABASES LIKE '$DB_NAME'"`
-    if [ "$RESULT" != $DB_NAME ]; then
-        mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
-    fi
-
-    RESULT_2=`mysql -u $DB_USER --password="$DB_PASS" --skip-column-names -e "SHOW DATABASES LIKE '$DB_SERVE_NAME'"`
-    if [ "$RESULT_2" != $DB_SERVE_NAME ]; then
-        mysqladmin create $DB_SERVE_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
-    fi
-
+	# create database
+	mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
 }
 
 configure_wordpress() {
 
     cd $WP_CORE_DIR
-    wp config create --dbname="$DB_SERVE_NAME" --dbuser=root --dbpass="$DB_PASS" --dbhost="$DB_HOST" --skip-check --force=true
-    wp core install --url=wpgraphql.test --title="WPGraphQL Tests" --admin_user=admin --admin_password=password --admin_email=admin@wpgraphql.test
+    wp config create --dbname="$DB_NAME" --dbuser="$DB_USER" --dbpass="$DB_PASS" --dbhost="$DB_HOST" --skip-check --force=true
+    wp core install --url=wpgraphql.test --title="WPGraphQL jwt-authentication Tests" --admin_user=admin --admin_password=password --admin_email=admin@wpgraphql.test
     wp rewrite structure '/%year%/%monthnum%/%postname%/'
 }
 
 install_wpgraphql() {
-	echo "Cloning WPGraphQL"
-	git clone https://github.com/wp-graphql/wp-graphql.git $WP_CORE_DIR/wp-content/plugins/wp-graphql
+	if [ ! -d $WP_CORE_DIR/wp-content/plugins/wp-graphql ]; then
+		echo "Cloning WPGraphQL"
+		git clone https://github.com/wp-graphql/wp-graphql.git $WP_CORE_DIR/wp-content/plugins/wp-graphql
+	fi
+	echo "Activating WPGraphQL"
+	wp plugin activate wp-graphql
 }
 
 activate_plugins() {
 
     # Add this repo as a plugin to the repo
-    ln -s $PLUGIN_DIR $WP_CORE_DIR/wp-content/plugins/wp-graphql-jwt-authentication
+	if [ ! -d $WP_CORE_DIR/wp-content/plugins/wp-graphql-jwt-authentication ]; then
+    	ln -s $PLUGIN_DIR $WP_CORE_DIR/wp-content/plugins/wp-graphql-jwt-authentication
+	fi
 
     cd $WP_CORE_DIR
-
-    # activate the plugin
-    wp plugin activate wp-graphql
-    wp plugin activate wp-graphql-jwt-authentication
 
     # Flush the permalinks
     wp rewrite flush

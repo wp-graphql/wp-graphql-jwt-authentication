@@ -27,7 +27,7 @@ extensions:
         - Codeception\Command\GenerateWPCanonical
         - Codeception\Command\GenerateWPXMLRPC
 params:
-    - .env
+    - .env.dist
 modules:
     config:
         WPDb:
@@ -67,5 +67,6 @@ modules:
             domain: '%WP_DOMAIN%'
             adminEmail: '%ADMIN_EMAIL%'
             title: 'Test'
-            plugins: ['wp-graphql/wp-graphql.php', 'wp-graphql-jwt-authentication/wp-graphql-jwt-authentication.php']
-            activatePlugins: ['wp-graphql/wp-graphql.php', 'wp-graphql-jwt-authentication/wp-graphql-jwt-authentication.php', ]
+            plugins: ['wp-graphql/wp-graphql.php', 'wp-graphql/wp-graphql-jwt-authentication.php']
+            activatePlugins: ['wp-graphql/wp-graphql.php', 'wp-graphql/wp-graphql-jwt-authentication.php', ]
+            configFile: 'tests/_data/config.php'
