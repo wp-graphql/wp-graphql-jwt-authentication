@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source .env
+source .env.dist
 
 print_usage_instruction() {
 	echo "Ensure that .env file exist in project root directory exists."
