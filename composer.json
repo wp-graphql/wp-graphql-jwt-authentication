@@ -10,6 +10,13 @@
       "email": "jasonbahl@mac.com"
     }
   ],
+  "scripts": {
+    "install-wp-tests": "bash bin/install-wp-tests.sh",
+    "test": "vendor/bin/codecept run",
+    "functional-test": "vendor/bin/codecept run functional",
+    "acceptance-test": "vendor/bin/codecept run acceptance",
+    "wpunit-test": "vendor/bin/codecept run wpunit"
+  },
   "require": {
     "firebase/php-jwt": "^4.0"
   },
