@@ -33,7 +33,7 @@ install:
   #- php coveralls.phar --version
 
 before_script:
-  - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
+  - bash bin/install-wp-tests.sh
   - composer self-update
   # - composer require phpunit/phpunit:$PHP_UNIT_VERSION
   - composer install --no-interaction
