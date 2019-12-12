@@ -62,14 +62,14 @@ class Auth {
 		/**
 		 * Set the current user as the authenticated user
 		 */
-		wp_set_current_user( $user->data->ID );
+		//wp_set_current_user( $user->data->ID );
 
 		/**
 		 * The token is signed, now create the object with basic user data to send to the client
 		 */
 		$response = [
-			'authToken'    => self::get_signed_token( $user ),
-			'refreshToken' => self::get_refresh_token( $user ),
+			'authToken'    => self::get_signed_token( $user, false ),
+			'refreshToken' => self::get_refresh_token( $user, false ),
 			'user'         => DataSource::resolve_user( $user->data->ID, \WPGraphQL::get_app_context() ),
 		];
 
