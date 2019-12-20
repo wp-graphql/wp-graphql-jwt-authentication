@@ -142,7 +142,10 @@ install_db() {
 	fi
 
 	# create database
-	mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
+	RESULT=`mysql -u $DB_USER --password="$DB_PASS" --skip-column-names -e "SHOW DATABASES LIKE '$DB_NAME'"$EXTRA`
+	if [ "$RESULT" != $DB_NAME ]; then
+			mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
+	fi
 }
 
 configure_wordpress() {
