@@ -127,7 +127,7 @@ class ManageTokens {
 		];
 
 		$fields['isJwtAuthSecretRevoked'] = [
-			'type'        => Type::nonNull( $type_registry->get_type( 'Boolean' ) ),
+			'type'        => $type_registry->non_null( $type_registry->get_type( 'Boolean' ) ),
 			'description' => __( 'Whether the JWT User secret has been revoked. If the secret has been revoked, auth tokens will not be issued until an admin, or user with proper capabilities re-issues a secret for the user.', 'wp-graphql-jwt-authentication' ),
 			'resolve'     => function ( User $user ) {
 				$revoked = Auth::is_jwt_secret_revoked( $user->ID );
