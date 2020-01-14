@@ -121,11 +121,13 @@ class Auth {
 	}
 
 	/**
-	 * @param $user
+	 * Retrieves validates user and retrieve signed token
+	 *
+	 * @param User|WP_User $user  Owner of the token.
 	 *
 	 * @return null|string
 	 */
-	protected static function get_signed_token( \WP_User $user, $cap_check = true ) {
+	protected static function get_signed_token( $user, $cap_check = true ) {
 
 		/**
 		 * Only allow the currently signed in user access to a JWT token
