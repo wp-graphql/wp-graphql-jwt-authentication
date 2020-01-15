@@ -21,9 +21,8 @@ class ManageTokens {
 	 * Initialize the funcionality for managing tokens
 	 */
 	public static function init() {
-
-		// Filter the User type to have a jwtUserSecret and jwtAuthToken field.
-		add_filter( 'graphql_user_fields', [ __CLASS__, 'add_user_fields' ], 10, 3 );
+		// Register JWT fields.
+		add_action( 'graphql_register_types', [ __CLASS__, 'add_jwt_fields' ], 10 );
 
 		// Add fields to the input for user mutations.
 		add_filter( 'graphql_user_mutation_input_fields', [ __CLASS__, 'add_user_mutation_input_fields' ] );
@@ -52,91 +51,99 @@ class ManageTokens {
 	}
 
 	/**
-	 * Filters the User type in the GraphQL Schema to provide fields for querying for user's
-	 * jwtAuthToken and jwtUserSecret
+	 * Registers JWT fields to the GraphQL schema on all targeted types.
 	 *
-	 * @param array                            $fields         The fields for the User type in the GraphQL Schema.
-	 * @param \WPGraphQL\Type\WPObjectType     $object         The WPObjectType the fields are be added to.
-	 * @param \WPGraphQL\Registry\TypeRegistry $type_registry  TypeRegistry instance.
+	 * Type must provided an root object with an User ID assigned to the "ID" field.
+	 * Ex. $source->ID
+	 */
+	public static function add_jwt_fields() {
+		$types = apply_filters( 'graphql_jwt_user_types', [ 'User' ] );
+		foreach ( $types as $type ) {
+			self::register_jwt_fields_to( $type );
+		}
+	}
+
+	/**
+	 * Adds the JWT fields to the provided type.
+	 *
+	 * @param string $type  Type for the fields to be registered to.
 	 *
 	 * @throws UserError  Invalid token/Token not found.
-	 * @return array $fields
 	 */
-	public static function add_user_fields( $fields, $object, $type_registry ) {
-		$fields['jwtAuthToken'] = [
-			'type'        => $type_registry->get_type( 'String' ),
-			'description' => __( 'A JWT token that can be used in future requests for authentication/authorization', 'wp-graphql-jwt-authentication' ),
-			'resolve'     => function ( User $user ) {
-				$user = get_user_by( 'id', $user->ID );
+	public static function register_jwt_fields_to( $type ) {
+		register_graphql_fields(
+			$type,
+			[
+				'jwtAuthToken'           => [
+					'type'        => 'String',
+					'description' => __( 'A JWT token that can be used in future requests for authentication/authorization', 'wp-graphql-jwt-authentication' ),
+					'resolve'     => function ( $user ) {
+						$user = get_user_by( 'id', $user->ID );
 
-				// Get the token for the user.
-				$token = Auth::get_token( $user );
+						// Get the token for the user.
+						$token = Auth::get_token( $user );
 
-				// If the token cannot be returned, throw an error.
-				if ( empty( $token ) || is_wp_error( $token ) ) {
-					throw new UserError( __( 'The JWT token could not be returned', 'wp-graphql-jwt-authentication' ) );
-				}
+						// If the token cannot be returned, throw an error.
+						if ( empty( $token ) || is_wp_error( $token ) ) {
+							throw new UserError( __( 'The JWT token could not be returned', 'wp-graphql-jwt-authentication' ) );
+						}
 
-				return ! empty( $token ) ? $token : null;
-			},
-		];
+						return ! empty( $token ) ? $token : null;
+					},
+				],
+				'jwtRefreshToken'        => [
+					'type'        => 'String',
+					'description' => __( 'A JWT token that can be used in future requests to get a refreshed jwtAuthToken. If the refresh token used in a request is revoked or otherwise invalid, a valid Auth token will NOT be issued in the response headers.', 'wp-graphql-jwt-authentication' ),
+					'resolve'     => function ( $user ) {
+						$user = get_user_by( 'id', $user->ID );
 
-		$fields['jwtRefreshToken'] = [
-			'type'        => $type_registry->get_type( 'String' ),
-			'description' => __( 'A JWT token that can be used in future requests to get a refreshed jwtAuthToken. If the refresh token used in a request is revoked or otherwise invalid, a valid Auth token will NOT be issued in the response headers.', 'wp-graphql-jwt-authentication' ),
-			'resolve'     => function ( User $user ) {
-				$user = get_user_by( 'id', $user->ID );
+						// Get the token for the user.
+						$token = Auth::get_refresh_token( $user );
 
-				// Get the token for the user.
-				$token = Auth::get_refresh_token( $user );
+						// If the token cannot be returned, throw an error.
+						if ( empty( $token ) || is_wp_error( $token ) ) {
+							throw new UserError( __( 'The JWT token could not be returned', 'wp-graphql-jwt-authentication' ) );
+						}
 
-				// If the token cannot be returned, throw an error.
-				if ( empty( $token ) || is_wp_error( $token ) ) {
-					throw new UserError( __( 'The JWT token could not be returned', 'wp-graphql-jwt-authentication' ) );
-				}
+						return ! empty( $token ) ? $token : null;
+					},
+				],
+				'jwtUserSecret'          => [
+					'type'        => 'String',
+					'description' => __( 'A unique secret tied to the users JWT token that can be revoked or refreshed. Revoking the secret prevents JWT tokens from being issued to the user. Refreshing the token invalidates previously issued tokens, but allows new tokens to be issued.', 'wp-graphql' ),
+					'resolve'     => function ( $user ) {
+						// Get the user's JWT Secret.
+						$secret = Auth::get_user_jwt_secret( $user->ID );
 
-				return ! empty( $token ) ? $token : null;
-			},
-		];
+						// If the secret cannot be returned, throw an error.
+						if ( is_wp_error( $secret ) ) {
+							throw new UserError( __( 'The user secret could not be returned', 'wp-graphql-jwt-authentication' ) );
+						}
 
-		$fields['jwtUserSecret'] = [
-			'type'        => $type_registry->get_type( 'String' ),
-			'description' => __( 'A unique secret tied to the users JWT token that can be revoked or refreshed. Revoking the secret prevents JWT tokens from being issued to the user. Refreshing the token invalidates previously issued tokens, but allows new tokens to be issued.', 'wp-graphql' ),
-			'resolve'     => function ( User $user ) {
-				// Get the user's JWT Secret.
-				$secret = Auth::get_user_jwt_secret( $user->ID );
+						// Return the secret.
+						return ! empty( $secret ) ? $secret : null;
+					},
+				],
+				'jwtAuthExpiration'      => [
+					'type'        => 'String',
+					'description' => __( 'The expiration for the JWT Token for the user. If not set custom for the user, it will use the default sitewide expiration setting', 'wp-graphql-jwt-authentication' ),
+					'resolve'     => function () {
+						$expiration = Auth::get_token_expiration();
 
-				// If the secret cannot be returned, throw an error.
-				if ( is_wp_error( $secret ) ) {
-					throw new UserError( __( 'The user secret could not be returned', 'wp-graphql-jwt-authentication' ) );
-				}
+						return ! empty( $expiration ) ? $expiration : null;
+					},
+				],
+				'isJwtAuthSecretRevoked' => [
+					'type'        => [ 'non_null' => 'Boolean' ],
+					'description' => __( 'Whether the JWT User secret has been revoked. If the secret has been revoked, auth tokens will not be issued until an admin, or user with proper capabilities re-issues a secret for the user.', 'wp-graphql-jwt-authentication' ),
+					'resolve'     => function ( $user ) {
+						$revoked = Auth::is_jwt_secret_revoked( $user->ID );
 
-				// Return the secret.
-				return ! empty( $secret ) ? $secret : null;
-			},
-		];
-
-		$fields['jwtAuthExpiration'] = [
-			'type'        => $type_registry->get_type( 'String' ),
-			'description' => __( 'The expiration for the JWT Token for the user. If not set custom for the user, it will use the default sitewide expiration setting', 'wp-graphql-jwt-authentication' ),
-			'resolve'     => function () {
-				$expiration = Auth::get_token_expiration();
-
-				return ! empty( $expiration ) ? $expiration : null;
-			},
-		];
-
-		$fields['isJwtAuthSecretRevoked'] = [
-			'type'        => $type_registry->non_null( $type_registry->get_type( 'Boolean' ) ),
-			'description' => __( 'Whether the JWT User secret has been revoked. If the secret has been revoked, auth tokens will not be issued until an admin, or user with proper capabilities re-issues a secret for the user.', 'wp-graphql-jwt-authentication' ),
-			'resolve'     => function ( User $user ) {
-				$revoked = Auth::is_jwt_secret_revoked( $user->ID );
-
-				return true === $revoked ? true : false;
-			},
-		];
-
-		return $fields;
+						return true === $revoked ? true : false;
+					},
+				],
+			]
+		);
 
 	}
 
