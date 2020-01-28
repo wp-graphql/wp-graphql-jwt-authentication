@@ -146,8 +146,6 @@ class ManageTokens {
 
 	/**
 	 * Given an array of fields, this returns an array with the new fields added
-	 *
-	 * @return array
 	 */
 	public static function add_user_mutation_input_fields() {
 		$fields = [
@@ -164,8 +162,6 @@ class ManageTokens {
 		register_graphql_fields( 'RegisterUserInput', $fields );
 		register_graphql_fields( 'CreateUserInput', $fields );
 		register_graphql_fields( 'UpdateUserInput', $fields );
-
-		return $fields;
 	}
 
 	/**
