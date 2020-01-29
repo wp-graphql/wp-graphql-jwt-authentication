@@ -9,9 +9,6 @@
 namespace WPGraphQL\JWT_Authentication;
 
 use GraphQL\Error\UserError;
-use GraphQL\Type\Definition\Type;
-use WPGraphQL\Model\User;
-use WPGraphQL\Types;
 
 /**
  * Class - ManageToken
@@ -25,7 +22,7 @@ class ManageTokens {
 		add_action( 'graphql_register_types', [ __CLASS__, 'add_jwt_fields' ], 10 );
 
 		// Add fields to the input for user mutations.
-		add_filter( 'graphql_user_mutation_input_fields', [ __CLASS__, 'add_user_mutation_input_fields' ] );
+		add_action( 'graphql_register_types', [ __CLASS__, 'add_user_mutation_input_fields' ] );
 		add_action( 'graphql_user_object_mutation_update_additional_data', [ __CLASS__, 'update_jwt_fields_during_mutation' ], 10, 3 );
 
 		// Filter the signed token, preventing it from returning if the user has had their JWT Secret revoked.
@@ -149,22 +146,32 @@ class ManageTokens {
 
 	/**
 	 * Given an array of fields, this returns an array with the new fields added
-	 *
-	 * @param array $fields The input fields for user mutations.
-	 *
-	 * @return array
 	 */
-	public static function add_user_mutation_input_fields( array $fields ) {
-		$fields['revokeJwtUserSecret']  = [
-			'type'        => Types::boolean(),
-			'description' => __( 'If true, this will revoke the users JWT secret. If false, this will unrevoke the JWT secret AND issue a new one. To revoke, the user must have proper capabilities to edit users JWT secrets.', 'wp-graphql-jwt-authentication' ),
-		];
-		$fields['refreshJwtUserSecret'] = [
-			'type'        => Types::boolean(),
-			'description' => __( 'If true, this will refresh the users JWT secret.' ),
+	public static function add_user_mutation_input_fields() {
+		$fields = [
+			'revokeJwtUserSecret' => [
+				'type'        => 'Boolean',
+				'description' => __( 'If true, this will revoke the users JWT secret. If false, this will unrevoke the JWT secret AND issue a new one. To revoke, the user must have proper capabilities to edit users JWT secrets.', 'wp-graphql-jwt-authentication' ),
+			],
+			'refreshJwtUserSecret' => [
+				'type'        => 'Boolean',
+				'description' => __( 'If true, this will refresh the users JWT secret.' ),
+			],
 		];
 
-		return $fields;
+
+		$mutations_to_add_fields_to = apply_filters('graphql_jwt_auth_add_user_mutation_input_fields', [
+			'RegisterUserInput',
+			'CreateUserInput',
+			'UpdateUserInput',
+		] );
+
+		if ( ! empty( $mutations_to_add_fields_to ) && is_array( $mutations_to_add_fields_to ) ) {
+			foreach ( $mutations_to_add_fields_to as $mutation ) {
+				register_graphql_fields( $mutation, $fields );
+			}
+		}
+
 	}
 
 	/**
