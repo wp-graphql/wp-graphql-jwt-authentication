@@ -102,9 +102,9 @@ class Auth {
 		if ( ! isset( self::$expiration ) ) {
 
 			/**
-			 * Set the expiration time, default is 300 seconds.
+			 * Set the expiration time, default is 700 seconds.
 			 */
-			$expiration = self::get_token_issued() + 300;
+			$expiration = self::get_token_issued() + 604800;
 
 			/**
 			 * Determine the expiration value. Default is 7 days, but is filterable to be configured as needed
