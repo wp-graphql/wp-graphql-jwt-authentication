@@ -200,11 +200,13 @@ class Auth {
 	 */
 	public static function get_user_jwt_secret( $user_id ) {
 
+		$is_revoked = Auth::is_jwt_secret_revoked( $user_id );
+
 		/**
 		 * If the secret has been revoked, throw an error
 		 */
-		if ( true === Auth::is_jwt_secret_revoked( $user_id ) ) {
-			return new \WP_Error( 'graphql-jwt-revoked-secret', __( 'The JWT Auth secret cannot be returned', 'wp-graphql-jwt-authentication' ) );
+		if ( true === (bool) $is_revoked ) {
+			return null;
 		}
 
 		/**
@@ -220,7 +222,7 @@ class Auth {
 		 */
 		$is_current_user = ( $user_id === get_current_user_id() ) ? true : false;
 		if ( ! $is_current_user || ! current_user_can( $capability ) ) {
-			return new \WP_Error( 'graphql-jwt-improper-capabilities', __( 'The JWT Auth secret for this user cannot be returned', 'wp-graphql-jwt-authentication' ) );
+			return null;
 		}
 
 		/**
