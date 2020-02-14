@@ -77,8 +77,15 @@ class ManageTokens {
 					'description' => __( 'A JWT token that can be used in future requests for authentication/authorization', 'wp-graphql-jwt-authentication' ),
 					'resolve'     => function ( $user ) {
 
-						if ( $user instanceof User ) {
-							$user = get_user_by( 'id', $user->userId );
+						$user_id = 0;
+						if ( isset( $user->userId ) ) {
+							$user_id = $user->userId;
+						} else if ( isset( $user->ID ) ) {
+							$user_id = $user->ID;
+						}
+
+						if ( ! $user instanceof \WP_User && ! empty( $user_id ) ) {
+							$user = get_user_by( 'id', $user_id );
 						}
 
 						// Get the token for the user.
@@ -101,8 +108,15 @@ class ManageTokens {
 					'description' => __( 'A JWT token that can be used in future requests to get a refreshed jwtAuthToken. If the refresh token used in a request is revoked or otherwise invalid, a valid Auth token will NOT be issued in the response headers.', 'wp-graphql-jwt-authentication' ),
 					'resolve'     => function ( $user ) {
 
-						if ( $user instanceof User ) {
-							$user = get_user_by( 'id', $user->userId );
+						$user_id = 0;
+						if ( isset( $user->userId ) ) {
+							$user_id = $user->userId;
+						} else if ( isset( $user->ID ) ) {
+							$user_id = $user->ID;
+						}
+
+						if ( ! $user instanceof \WP_User && ! empty( $user_id ) ) {
+							$user = get_user_by( 'id', $user_id );
 						}
 
 						// Get the token for the user.
@@ -127,9 +141,9 @@ class ManageTokens {
 
 						$user_id = 0;
 
-						if ( $user instanceof User ) {
+						if ( isset( $user->userId ) ) {
 							$user_id = $user->userId;
-						} else if ( $user instanceof \WP_User ) {
+						} else if ( isset( $user->ID ) ) {
 							$user_id = $user->ID;
 						}
 
