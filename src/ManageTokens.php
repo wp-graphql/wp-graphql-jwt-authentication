@@ -9,6 +9,7 @@
 namespace WPGraphQL\JWT_Authentication;
 
 use GraphQL\Error\UserError;
+use WPGraphQL\Model\User;
 
 /**
  * Class - ManageToken
@@ -75,7 +76,10 @@ class ManageTokens {
 					'type'        => 'String',
 					'description' => __( 'A JWT token that can be used in future requests for authentication/authorization', 'wp-graphql-jwt-authentication' ),
 					'resolve'     => function ( $user ) {
-						$user = get_user_by( 'id', $user->userId );
+
+						if ( $user instanceof User ) {
+							$user = get_user_by( 'id', $user->userId );
+						}
 
 						// Get the token for the user.
 						$token = Auth::get_token( $user );
@@ -97,7 +101,9 @@ class ManageTokens {
 					'description' => __( 'A JWT token that can be used in future requests to get a refreshed jwtAuthToken. If the refresh token used in a request is revoked or otherwise invalid, a valid Auth token will NOT be issued in the response headers.', 'wp-graphql-jwt-authentication' ),
 					'resolve'     => function ( $user ) {
 
-						$user = get_user_by( 'id', $user->userId );
+						if ( $user instanceof User ) {
+							$user = get_user_by( 'id', $user->userId );
+						}
 
 						// Get the token for the user.
 						$token = Auth::get_refresh_token( $user );
@@ -118,8 +124,17 @@ class ManageTokens {
 					'type'        => 'String',
 					'description' => __( 'A unique secret tied to the users JWT token that can be revoked or refreshed. Revoking the secret prevents JWT tokens from being issued to the user. Refreshing the token invalidates previously issued tokens, but allows new tokens to be issued.', 'wp-graphql' ),
 					'resolve'     => function ( $user ) {
+
+						$user_id = 0;
+
+						if ( $user instanceof User ) {
+							$user_id = $user->userId;
+						} else if ( $user instanceof \WP_User ) {
+							$user_id = $user->ID;
+						}
+
 						// Get the user's JWT Secret.
-						$secret = Auth::get_user_jwt_secret( $user->userId );
+						$secret = Auth::get_user_jwt_secret( $user_id );
 
 						// If the secret cannot be returned, throw an error.
 						if ( $secret instanceof \WP_Error ) {
@@ -238,9 +253,10 @@ class ManageTokens {
 	/**
 	 * Returns tokens in the response headers
 	 *
-	 * @param array $headers  GraphQL HTTP response headers.
+	 * @param array $headers GraphQL HTTP response headers.
 	 *
 	 * @return array
+	 * @throws \Exception
 	 */
 	public static function add_tokens_to_graphql_response_headers( $headers ) {
 		/**
@@ -286,9 +302,10 @@ class ManageTokens {
 	 * This allows clients the ability to Authenticate with WPGraphQL, use the token
 	 * with REST API Requests, but get new refresh tokens from the REST API Headers
 	 *
-	 * @param WP_HTTP_Response $response  Response object.
+	 * @param \WP_HTTP_Response $response Response object.
 	 *
 	 * @return \WP_HTTP_Response
+	 * @throws \Exception
 	 */
 	public static function add_auth_headers_to_rest_response( $response ) {
 		if ( ! $response instanceof \WP_HTTP_Response ) {

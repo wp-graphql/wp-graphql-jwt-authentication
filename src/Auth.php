@@ -123,7 +123,7 @@ class Auth {
 	/**
 	 * Retrieves validates user and retrieve signed token
 	 *
-	 * @param User|WP_User $user  Owner of the token.
+	 * @param \WP_User $user  Owner of the token.
 	 *
 	 * @return null|string
 	 */
