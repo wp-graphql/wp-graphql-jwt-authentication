@@ -320,7 +320,7 @@ class Auth {
 		 */
 		add_filter( 'graphql_jwt_auth_token_before_sign', function( $token, \WP_User $user ) {
 			$secret = Auth::get_user_jwt_secret( $user->ID );
-			
+
 			if ( ! empty( $secret ) && ! is_wp_error( $secret ) && true === self::is_refresh_token() ) {
 
 				/**
