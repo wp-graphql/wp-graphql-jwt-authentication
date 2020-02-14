@@ -68,8 +68,8 @@ class Auth {
 		 * The token is signed, now create the object with basic user data to send to the client
 		 */
 		$response = [
-			'authToken'    => self::get_signed_token( $user ),
-			'refreshToken' => self::get_refresh_token( $user ),
+			'authToken'    => self::get_signed_token( wp_get_current_user() ),
+			'refreshToken' => self::get_refresh_token( wp_get_current_user() ),
 			'user'         => DataSource::resolve_user( $user->data->ID, \WPGraphQL::get_app_context() ),
 			'id'           => $user->data->ID,
 		];
@@ -123,7 +123,8 @@ class Auth {
 	/**
 	 * Retrieves validates user and retrieve signed token
 	 *
-	 * @param User|WP_User $user  Owner of the token.
+	 * @param \WP_User $user  Owner of the token.
+	 * @param bool $cap_check Whether to check capabilities when getting the token
 	 *
 	 * @return null|string
 	 */
@@ -200,11 +201,13 @@ class Auth {
 	 */
 	public static function get_user_jwt_secret( $user_id ) {
 
+		$is_revoked = Auth::is_jwt_secret_revoked( $user_id );
+
 		/**
 		 * If the secret has been revoked, throw an error
 		 */
-		if ( true === Auth::is_jwt_secret_revoked( $user_id ) ) {
-			return new \WP_Error( 'graphql-jwt-revoked-secret', __( 'The JWT Auth secret cannot be returned', 'wp-graphql-jwt-authentication' ) );
+		if ( true === (bool) $is_revoked ) {
+			return null;
 		}
 
 		/**
@@ -216,11 +219,11 @@ class Auth {
 		$capability = apply_filters( 'graphql_jwt_auth_edit_users_capability', 'edit_users', $user_id );
 
 		/**
-		 * If the request is not from the current_user AND the current_user doesn't have the proper capabilities, don't return the secret
+		 * If the request is not from the current_user or the current_user doesn't have the proper capabilities, don't return the secret
 		 */
 		$is_current_user = ( $user_id === get_current_user_id() ) ? true : false;
 		if ( ! $is_current_user && ! current_user_can( $capability ) ) {
-			return new \WP_Error( 'graphql-jwt-improper-capabilities', __( 'The JWT Auth secret for this user cannot be returned', 'wp-graphql-jwt-authentication' ) );
+			return null;
 		}
 
 		/**
@@ -232,7 +235,7 @@ class Auth {
 		 * If there is no stored secret, or it's not a string
 		 */
 		if ( empty( $secret ) || ! is_string( $secret ) ) {
-			Auth::issue_new_user_secret( $user_id );
+			$secret = Auth::issue_new_user_secret( $user_id );
 		}
 
 		/**
@@ -291,6 +294,7 @@ class Auth {
 	 * Public method for getting an Auth token for a given user
 	 *
 	 * @param \WP_USer $user The user to get the token for
+	 * @param boolean $cap_check Whether to check capabilities. Default is true.
 	 *
 	 * @return null|string
 	 */
@@ -298,6 +302,13 @@ class Auth {
 		return self::get_signed_token( $user, $cap_check );
 	}
 
+	/**
+	 * Given a WP_User, this returns a refresh token for the user
+	 * @param \WP_User $user A WP_User object
+	 * @param bool $cap_check
+	 *
+	 * @return null|string
+	 */
 	public static function get_refresh_token( $user, $cap_check = true ) {
 
 		self::$is_refresh_token = true;
@@ -309,6 +320,7 @@ class Auth {
 		 */
 		add_filter( 'graphql_jwt_auth_token_before_sign', function( $token, \WP_User $user ) {
 			$secret = Auth::get_user_jwt_secret( $user->ID );
+
 			if ( ! empty( $secret ) && ! is_wp_error( $secret ) && true === self::is_refresh_token() ) {
 
 				/**
