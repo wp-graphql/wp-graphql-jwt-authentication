@@ -320,7 +320,7 @@ class Auth {
 		 */
 		add_filter( 'graphql_jwt_auth_token_before_sign', function( $token, \WP_User $user ) {
 			$secret = Auth::get_user_jwt_secret( $user->ID );
-			
+
 			if ( ! empty( $secret ) && ! is_wp_error( $secret ) && true === self::is_refresh_token() ) {
 
 				/**
@@ -427,7 +427,7 @@ class Auth {
 	 *
 	 * @return mixed|boolean|\WP_Error
 	 */
-	public static function revoke_user_secret( int $user_id ) {
+	public static function revoke_user_secret( $user_id ) {
 
 		/**
 		 * Filter the capability that is tied to editing/viewing user JWT Auth info
