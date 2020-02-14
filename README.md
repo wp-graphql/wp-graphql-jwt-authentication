@@ -14,9 +14,9 @@ This plugin was initially based off the `wp-api-jwt-auth` plugin by Enrique Chav
 
 ## Install, Activate & Setup
 
-You can install and activate the plugin like any WordPress plugin. Download the .zip from Github and add to your plugins directory, then activate. 
+You can install and activate the plugin like any WordPress plugin. Download the .zip from Github and add to your plugins directory, then activate.
 
-JWT uses a Secret defined on the server to validate the signing of tokens. 
+JWT uses a Secret defined on the server to validate the signing of tokens.
 
 It's recommended that you use something like the WordPress Salt generator (https://api.wordpress.org/secret-key/1.1/salt/) to generate a Secret.
 
@@ -25,7 +25,7 @@ You can define a Secret like so:
 define( 'GRAPHQL_JWT_AUTH_SECRET_KEY', 'your-secret-token' );
 ```
 
-Or you can use the filter `graphql_jwt_auth_secret_key` to set a Secret like so: 
+Or you can use the filter `graphql_jwt_auth_secret_key` to set a Secret like so:
 
 ```
 add_filter( 'graphql_jwt_auth_secret_key', function() {
@@ -51,15 +51,19 @@ For NGINX, this may work: https://serverfault.com/questions/511206/nginx-forward
 
 ## How the plugin Works
 
-This plugin adds a new `login` mutation to the WPGraphQL Schema. 
+### Login User
 
-This can be used like so: 
+This plugin adds a new `login` mutation to the WPGraphQL Schema.
 
-```
+This can be used like so:
+
+**Input-Type:** `LoginUserInput!`
+
+```graphql
 mutation LoginUser {
   login( input: {
-    clientMutationId:"uniqueId"
-    username: "your_login"
+    clientMutationId: "uniqueId",
+    username: "your_login",
     password: "your password"
   } ) {
     authToken
@@ -71,13 +75,52 @@ mutation LoginUser {
 }
 ```
 
-The `authToken` that is received in response to the login mutation can then be stored in local storage (or similar) and 
-used in subsequent requests as an HTTP Authorization header to Authenticate the user prior to execution of the 
-GraphQL request. 
+The `authToken` that is received in response to the login mutation can then be stored in local storage (or similar) and
+used in subsequent requests as an HTTP Authorization header to Authenticate the user prior to execution of the
+GraphQL request.
 
 - **Set authorization header in Apollo Client**: https://www.apollographql.com/docs/react/networking/authentication/#header
 - **Set authorization header in Relay Modern**: https://relay.dev/docs/en/network-layer.html
 - **Set authorization header in Axios**: https://github.com/axios/axios#axioscreateconfig
+
+
+### Register User
+
+**Input-Type:** `RegisterUserInput!`
+
+```graphql
+mutation RegisterUser {
+  registerUser(
+    input: {
+        clientMutationId: "uniqueId",
+        username: "your_username",
+        password: "your_password",
+        email: "your_email"
+    }) {
+    user {
+      jwtAuthToken
+      jwtRefreshToken
+    }
+  }
+}
+```
+
+### Refresh Auth Token
+
+**Input-Type:** `RefreshJwtAuthTokenInput!`
+
+```graphql
+mutation RefreshAuthToken {
+  refreshJwtAuthToken(
+    input: {
+      clientMutationId: "uniqueId"
+      jwtRefreshToken: "your_refresh_token",
+  }) {
+    authToken
+  }
+}
+```
+
 
 ## Example using GraphiQL
 ![Example using GraphiQL](https://github.com/wp-graphql/wp-graphql-jwt-authentication/blob/master/img/jwt-auth-example.gif?raw=true)
