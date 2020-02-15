@@ -12,6 +12,7 @@ class Auth {
 	protected static $expiration;
 	protected static $is_refresh_token = false;
 	protected static $refresh_token_valid_days = 30;
+	protected static $auth_token_is_stateful = true;
 
 	/**
 	 * This returns the secret key, using the defined constant if defined, and passing it through a filter to
@@ -140,14 +141,21 @@ class Auth {
 			return new \WP_Error( 'graphql-jwt-no-permissions', __( 'Only the user requesting a token can get a token issued for them', 'wp-graphql-jwt-authentication' ) );
 		}
 
-		$secret = Auth::get_user_jwt_secret( $user->ID );
 
-		/**
-		 * Only allow access to a new token, if a valid user_secret is given and has not been revoked.
-		 */
-		if ( empty( $secret ) || is_wp_error( $secret ) ) {
-			return new \WP_Error( 'graphql-jwt-no-permissions', __( 'User secret of requesting user has been revoked or is missing.', 'wp-graphql-jwt-authentication' ) );
+		$secret = null;
+
+		if( self::$auth_token_is_stateful || self::$is_refresh_token) {
+			$secret = Auth::get_user_jwt_secret( $user->ID );
+
+			/**
+			 * Only allow access to a new token, if a valid user_secret is given and has not been revoked.
+			 */
+			if ( empty( $secret ) || is_wp_error( $secret ) ) {
+				return new \WP_Error( 'graphql-jwt-no-permissions', __( 'User secret of requesting user has been revoked or is missing.', 'wp-graphql-jwt-authentication' ) );
+			}
 		}
+
+
 
 		/**
 		 * Determine the "not before" value for use in the token
@@ -620,7 +628,7 @@ class Auth {
 				if ( $token_user_secret !== $user_secret ) {
 					throw new \Exception( __( 'The User Secret does not match for this user', 'wp-graphql-jwt-authentication' ) );
 				}
-			} else {
+			} else if (self::$auth_token_is_stateful || self::$is_refresh_token) {
 				throw new \Exception( __( 'The User Secret is missing in the token.', 'wp-graphql-jwt-authentication' ) );
 			}
 
