@@ -179,6 +179,13 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 				[ '\WPGraphQL\JWT_Authentication\RefreshToken', 'register_mutation' ],
 				10
 			);
+
+			// Register the "refreshUserSecret" mutation to the Schema.
+			add_filter(
+				'graphql_register_types',
+				[ '\WPGraphQL\JWT_Authentication\UserSecret', 'register_mutation' ],
+				10
+			);
 		}
 	}
 
