@@ -542,7 +542,7 @@ class Auth {
 			 * @since 0.0.1
 			 */
 			if ( empty( $auth_header ) ) {
-				return false;
+				return $token;
 			} else {
 				/**
 				 * The HTTP_AUTHORIZATION is present verify the format
@@ -557,52 +557,60 @@ class Auth {
 		 * If there's no secret key, throw an error as there needs to be a secret key for Auth to work properly
 		 */
 		if ( ! self::get_secret_key() ) {
-			throw new \Exception( __( 'JWT is not configured properly', 'wp-graphql-jwt-authentication' ) );
+			self::set_status( 403 );
+			return new \WP_Error( 'invalid-secret-key', __( 'JWT is not configured properly', 'wp-graphql-jwt-authentication' ) );
+		}
+
+
+
+		/**
+		 * Decode the Token
+		 */
+		JWT::$leeway = 60;
+
+		$secret = self::get_secret_key();
+
+		try {
+			$token = ! empty( $token ) ? JWT::decode( $token, $secret, [ 'HS256' ] ) : null;
+		} catch ( \Exception $exception ) {
+			$token =  new \WP_Error( 'invalid-secret-key', $exception->getMessage() );
 		}
 
 		/**
-		 * Try to decode the token
+		 * If there's no token listed, just bail now before validating an empty token.
+		 * This will treat the request as a public request
 		 */
-		try {
+		if ( empty( $token )  ) {
+			return $token;
+		}
 
-			/**
-			 * Decode the Token
-			 */
-			JWT::$leeway = 60;
+		/**
+		 * The Token is decoded now validate the iss
+		 */
+		if ( ! isset( $token->iss ) || get_bloginfo( 'url' ) !== $token->iss ) {
+			$token = new \WP_Error( 'invalid-jwt', __( 'The iss do not match with this server', 'wp-graphql-jwt-authentication' ) );
+		}
 
-			$secret = self::get_secret_key();
-			$token = ! empty( $token ) ? JWT::decode( $token, $secret, [ 'HS256' ] ) : null;
 
-			/**
-			 * The Token is decoded now validate the iss
-			 */
-			if ( ! isset( $token->iss ) || get_bloginfo( 'url' ) !== $token->iss ) {
-				throw new \Exception( __( 'The iss do not match with this server', 'wp-graphql-jwt-authentication' ) );
+		/**
+		 * So far so good, validate the user id in the token
+		 */
+		if ( ! isset( $token->data->user->id ) ) {
+			$token = new \WP_Error( 'invalid-jwt', __( 'User ID not found in the token', 'wp-graphql-jwt-authentication' ) );
+		}
+
+		/**
+		 * If there is a user_secret in the token (refresh tokens) make sure it matches what
+		 */
+		if ( isset( $token->data->user->user_secret ) ) {
+
+			if ( Auth::is_jwt_secret_revoked( $token->data->user->id ) ) {
+				$token = new \WP_Error( 'invalid-jwt', __( 'The User Secret does not match or has been revoked for this user', 'wp-graphql-jwt-authentication' ) );
 			}
+		}
 
-			/**
-			 * So far so good, validate the user id in the token
-			 */
-			if ( ! isset( $token->data->user->id ) ) {
-				throw new \Exception( __( 'User ID not found in the token', 'wp-graphql-jwt-authentication' ) );
-			}
-
-			/**
-			 * If there is a user_secret in the token (refresh tokens) make sure it matches what
-			 */
-			if ( isset( $token->data->user->user_secret ) ) {
-
-				if ( Auth::is_jwt_secret_revoked( $token->data->user->id ) ) {
-					throw new \Exception( __( 'The User Secret does not match or has been revoked for this user', 'wp-graphql-jwt-authentication' ) );
-				}
-			}
-
-			/**
-			 * If any exceptions are caught
-			 */
-		} catch ( \Exception $error ) {
+		if ( is_wp_error( $token ) ) {
 			self::set_status( 403 );
-			return new \WP_Error( 'invalid_token', __( 'The JWT Token is invalid', 'wp-graphql-jwt-authentication' ) );
 		}
 
 		self::$is_refresh_token = false;
