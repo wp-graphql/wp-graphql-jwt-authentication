@@ -2,3 +2,5 @@ acceptance.suite.yml
 functional.suite.yml
 wpunit.suite.yml
 unit.suite.yml
+*
+!.gitignore
