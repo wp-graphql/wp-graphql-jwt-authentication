@@ -588,15 +588,14 @@ class Auth {
 		 * The Token is decoded now validate the iss
 		 */
 		if ( ! isset( $token->iss ) || get_bloginfo( 'url' ) !== $token->iss ) {
-			$token = new \WP_Error( 'invalid-jwt', __( 'The iss do not match with this server', 'wp-graphql-jwt-authentication' ) );
+			return new \WP_Error( 'invalid-jwt', __( 'The iss do not match with this server', 'wp-graphql-jwt-authentication' ) );
 		}
-
 
 		/**
 		 * So far so good, validate the user id in the token
 		 */
 		if ( ! isset( $token->data->user->id ) ) {
-			$token = new \WP_Error( 'invalid-jwt', __( 'User ID not found in the token', 'wp-graphql-jwt-authentication' ) );
+			return new \WP_Error( 'invalid-jwt', __( 'User ID not found in the token', 'wp-graphql-jwt-authentication' ) );
 		}
 
 		/**
@@ -605,7 +604,7 @@ class Auth {
 		if ( isset( $token->data->user->user_secret ) ) {
 
 			if ( Auth::is_jwt_secret_revoked( $token->data->user->id ) ) {
-				$token = new \WP_Error( 'invalid-jwt', __( 'The User Secret does not match or has been revoked for this user', 'wp-graphql-jwt-authentication' ) );
+				return new \WP_Error( 'invalid-jwt', __( 'The User Secret does not match or has been revoked for this user', 'wp-graphql-jwt-authentication' ) );
 			}
 		}
 
