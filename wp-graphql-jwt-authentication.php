@@ -159,6 +159,7 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 			// Initialize the GraphQL fields for managing tokens.
 			ManageTokens::init();
 
+
 			// Filter how WordPress determines the current user.
 			add_filter(
 				'determine_current_user',
@@ -186,6 +187,23 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 				[ '\WPGraphQL\JWT_Authentication\UserSecret', 'register_mutation' ],
 				10
 			);
+
+
+			/**
+			 * When the GraphQL Request is initiated, validate the token.
+			 *
+			 * If the Auth Token is not valid, prevent execution of resolvers. This will also set the
+			 * response status to 403.
+			 */
+			add_action( 'init_graphql_request', function() {
+				$token = Auth::validate_token();
+				if ( is_wp_error( $token ) ) {
+					add_action( 'graphql_before_resolve_field', function() use ( $token ) {
+						throw new \Exception( $token->get_error_code() . ' | ' . $token->get_error_message() );
+					}, 1 );
+				}
+			} );
+
 		}
 	}
 
