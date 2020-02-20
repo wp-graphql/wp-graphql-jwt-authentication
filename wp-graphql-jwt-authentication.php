@@ -7,7 +7,7 @@
  * Author URI: https://www.wpgraphql.com
  * Text Domain: wp-graphql-jwt-authentication-jwt-authentication
  * Domain Path: /languages
- * Version: 0.3.5
+ * Version: 0.4.0
  * Requires at least: 4.7.0
  * Tested up to: 4.8.3
  * Requires PHP: 5.5
@@ -113,7 +113,7 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 		private function setup_constants() {
 			// Plugin version.
 			if ( ! defined( 'WPGRAPHQL_JWT_AUTHENTICATION_VERSION' ) ) {
-				define( 'WPGRAPHQL_JWT_AUTHENTICATION_VERSION', '0.3.5' );
+				define( 'WPGRAPHQL_JWT_AUTHENTICATION_VERSION', '0.4.0' );
 			}
 
 			// Plugin Folder Path.
@@ -159,6 +159,7 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 			// Initialize the GraphQL fields for managing tokens.
 			ManageTokens::init();
 
+
 			// Filter how WordPress determines the current user.
 			add_filter(
 				'determine_current_user',
@@ -179,6 +180,23 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 				[ '\WPGraphQL\JWT_Authentication\RefreshToken', 'register_mutation' ],
 				10
 			);
+
+
+			/**
+			 * When the GraphQL Request is initiated, validate the token.
+			 *
+			 * If the Auth Token is not valid, prevent execution of resolvers. This will also set the
+			 * response status to 403.
+			 */
+			add_action( 'init_graphql_request', function() {
+				$token = Auth::validate_token();
+				if ( is_wp_error( $token ) ) {
+					add_action( 'graphql_before_resolve_field', function() use ( $token ) {
+						throw new \Exception( $token->get_error_code() . ' | ' . $token->get_error_message() );
+					}, 1 );
+				}
+			} );
+
 		}
 	}
 
