@@ -105,19 +105,17 @@ class Auth {
 			/**
 			 * Set the expiration time, default is 300 seconds.
 			 */
-			$expiration = self::get_token_issued() + 300;
+			$expiration = 300;
 
 			/**
-			 * Determine the expiration value. Default is 7 days, but is filterable to be configured as needed
+			 * Determine the expiration value. Default is 5 minutes, but is filterable to be configured as needed
 			 *
 			 * @param string $expiration The timestamp for when the token should expire
 			 */
-			self::$expiration = apply_filters( 'graphql_jwt_auth_expire', $expiration );
-
+			self::$expiration = self::get_token_issued() + apply_filters( 'graphql_jwt_auth_expire', $expiration );
 		}
 
 		return ! empty( self::$expiration ) ? self::$expiration : null;
-
 	}
 
 	/**

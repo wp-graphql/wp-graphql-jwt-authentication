@@ -121,6 +121,21 @@ mutation RefreshAuthToken {
 }
 ```
 
+## Filters
+
+The plugin offers some filters to hook into.
+
+### Change Auth Token expiry time
+
+**Note: For security, we highly recommend, that the Auth Token is short lived. So do not set this higher than 300 seconds unless you know what you are doing.**
+
+```php
+add_filter('graphql_jwt_auth_expire', 60);
+```
+
+- Argument: Expiry time in seconds
+- Default: 300
+
 
 ## Example using GraphiQL
 ![Example using GraphiQL](https://github.com/wp-graphql/wp-graphql-jwt-authentication/blob/master/img/jwt-auth-example.gif?raw=true)
