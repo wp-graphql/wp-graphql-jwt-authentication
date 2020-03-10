@@ -367,9 +367,7 @@ class Auth {
 			 */
 			$user = wp_signon( $credentials, true );
 		} else {
-			/**
-			 * Try to authenticate the user with the passed credentials
-			 */
+			 // Try to authenticate the user with the passed credentials
 			$user = wp_authenticate( sanitize_user( $username ), trim( $password ) );
 		}
 
