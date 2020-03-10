@@ -362,9 +362,7 @@ class Auth {
 				'remember'  => false,
 			];
 
-			/**
-			 * Try to authenticate the user with the passed credentials, log him in and set cookies
-			 */
+			 // Try to authenticate the user with the passed credentials, log him in and set cookies
 			$user = wp_signon( $credentials, true );
 		} else {
 			 // Try to authenticate the user with the passed credentials
