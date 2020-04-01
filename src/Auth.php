@@ -23,7 +23,7 @@ class Auth {
 	public static function get_secret_key() {
 
 		// Use the defined secret key, if it exists
-		$secret_key = defined( 'GRAPHQL_JWT_AUTH_SECRET_KEY' ) && ! empty( GRAPHQL_JWT_AUTH_SECRET_KEY ) ? GRAPHQL_JWT_AUTH_SECRET_KEY : 'graphql-jwt-auth';
+		$secret_key = defined( 'GRAPHQL_JWT_AUTH_SECRET_KEY' ) && ! empty( GRAPHQL_JWT_AUTH_SECRET_KEY ) ? GRAPHQL_JWT_AUTH_SECRET_KEY : null;
 		return apply_filters( 'graphql_jwt_auth_secret_key', $secret_key );
 
 	}
