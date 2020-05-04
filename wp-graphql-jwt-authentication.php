@@ -7,7 +7,7 @@
  * Author URI: https://www.wpgraphql.com
  * Text Domain: wp-graphql-jwt-authentication-jwt-authentication
  * Domain Path: /languages
- * Version: 0.4.0
+ * Version: 0.4.1
  * Requires at least: 4.7.0
  * Tested up to: 4.8.3
  * Requires PHP: 5.5
@@ -113,7 +113,7 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 		private function setup_constants() {
 			// Plugin version.
 			if ( ! defined( 'WPGRAPHQL_JWT_AUTHENTICATION_VERSION' ) ) {
-				define( 'WPGRAPHQL_JWT_AUTHENTICATION_VERSION', '0.4.0' );
+				define( 'WPGRAPHQL_JWT_AUTHENTICATION_VERSION', '0.4.1' );
 			}
 
 			// Plugin Folder Path.
@@ -189,12 +189,20 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 			 * response status to 403.
 			 */
 			add_action( 'init_graphql_request', function() {
-				$token = Auth::validate_token();
-				if ( is_wp_error( $token ) ) {
-					add_action( 'graphql_before_resolve_field', function() use ( $token ) {
-						throw new \Exception( $token->get_error_code() . ' | ' . $token->get_error_message() );
-					}, 1 );
+
+				$jwt_secret = Auth::get_secret_key();
+				if ( empty( $jwt_secret ) || 'graphql-jwt-auth' === $jwt_secret ) {
+					throw new \Exception( __( 'You must define the GraphQL JWT Auth secret to use the WPGraphQL JWT Authentication plugin.', 'graphql-jwt-auth' ) );
+				} else {
+					$token = Auth::validate_token();
+					if ( is_wp_error( $token ) ) {
+						add_action( 'graphql_before_resolve_field', function() use ( $token ) {
+							throw new \Exception( $token->get_error_code() . ' | ' . $token->get_error_message() );
+						}, 1 );
+					}
 				}
+
+
 			} );
 
 		}
