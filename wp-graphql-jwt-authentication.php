@@ -189,12 +189,20 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 			 * response status to 403.
 			 */
 			add_action( 'init_graphql_request', function() {
-				$token = Auth::validate_token();
-				if ( is_wp_error( $token ) ) {
-					add_action( 'graphql_before_resolve_field', function() use ( $token ) {
-						throw new \Exception( $token->get_error_code() . ' | ' . $token->get_error_message() );
-					}, 1 );
+
+				$jwt_secret = Auth::get_secret_key();
+				if ( empty( $jwt_secret ) || 'graphql-jwt-auth' === $jwt_secret ) {
+					throw new \Exception( __( 'You must define the GraphQL JWT Auth secret to use the WPGraphQL JWT Authentication plugin.', 'graphql-jwt-auth' ) );
+				} else {
+					$token = Auth::validate_token();
+					if ( is_wp_error( $token ) ) {
+						add_action( 'graphql_before_resolve_field', function() use ( $token ) {
+							throw new \Exception( $token->get_error_code() . ' | ' . $token->get_error_message() );
+						}, 1 );
+					}
 				}
+
+
 			} );
 
 		}
