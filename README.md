@@ -14,18 +14,17 @@ This plugin was initially based off the `wp-api-jwt-auth` plugin by Enrique Chav
 
 ## Install, Activate & Setup
 
-You can install and activate the plugin like any WordPress plugin. Download the .zip from Github and add to your plugins directory, then activate.
+You can install and activate the plugin like any WordPress plugin. Download the .zip from Github and add to your plugins directory, then activate. **For the plugin to take effect, you also need to define a Secret key.** JWT uses the Secret defined on the server to validate the signing of tokens.
 
-JWT uses a Secret defined on the server to validate the signing of tokens.
+It's recommended that you use something like the WordPress Salt generator (https://api.wordpress.org/secret-key/1.1/salt/) to generate the value for a Secret.
 
-It's recommended that you use something like the WordPress Salt generator (https://api.wordpress.org/secret-key/1.1/salt/) to generate a Secret.
+You can define a Secret by including the following snippet in your `wp-config.php` file, underneath the other authentication keys (where `'your-secret-token'` is replaced with the value created by the WordPress Salt generator):
 
-You can define a Secret like so:
 ```
 define( 'GRAPHQL_JWT_AUTH_SECRET_KEY', 'your-secret-token' );
 ```
 
-Or you can use the filter `graphql_jwt_auth_secret_key` to set a Secret like so:
+Alternatively, you can use the filter `graphql_jwt_auth_secret_key` to set a Secret like so:
 
 ```
 add_filter( 'graphql_jwt_auth_secret_key', function() {
