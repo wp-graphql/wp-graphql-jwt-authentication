@@ -571,7 +571,7 @@ class Auth {
 		try {
 			$token = ! empty( $token ) ? JWT::decode( $token, $secret, [ 'HS256' ] ) : null;
 		} catch ( \Exception $exception ) {
-			self::set_status( 401 );
+            self::set_status( 403 );
             return new \WP_Error( 'invalid-secret-key', $exception->getMessage() );
 		}
 
