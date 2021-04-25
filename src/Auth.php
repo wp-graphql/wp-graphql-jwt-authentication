@@ -38,7 +38,7 @@ class Auth {
 	 * @throws \Exception
 	 * @since 0.0.1
 	 */
-	public static function login_and_get_token( $username, $password ) {
+	public static function login_and_get_token( $username, $password, $fullInput ) {
 
 		/**
 		 * First thing, check the secret key if not exist return a error
@@ -50,7 +50,7 @@ class Auth {
 		/**
 		 * Authenticate the user and get the Authenticated user object in response
 		 */
-		$user = self::authenticate_user( $username, $password );
+		$user = self::authenticate_user( $username, $password, $fullInput );
 
 		/**
 		 * Set the current user to the authenticated user
@@ -351,18 +351,38 @@ class Auth {
 	 *
 	 * @return null|\WP_Error|\WP_User
 	 */
-	protected static function authenticate_user( $username, $password ) {
+	protected static function authenticate_user( $username, $password, $fullInput ) {
 
-		/**
-		 * Try to authenticate the user with the passed credentials
+        /**
+		 * Filter boolean if we should use WordPress authentication
+		 *
+		 * @param   boolean true
+		 * @param   object  $fullInput
 		 */
-		$user = wp_authenticate( sanitize_user( $username ), trim( $password ) );
+		if(apply_filters( 'graphql_jwt_auth_use_wp_authentication', true, $fullInput )){
+            
+            /**
+             * Try to authenticate the user with the passed credentials
+             */
+            $user = wp_authenticate( sanitize_user( $username ), trim( $password ) );
+        } else {
+            
+            /**
+             * Filter login input data to authenticate user using some other method.
+             *
+             * @param   string username
+             * @param   string password
+             * @param   object  $fullInput
+             */
+            $defaultDenial = new \WP_Error(__('Those credentials were not authenticated by any third party provider'));
+            $user = apply_filters( 'graphql_jwt_auth_authenticate_user', $defaultDenial, sanitize_user( $username ), trim( $password ), $fullInput );
+        }
 
 		/**
 		 * If the authentication fails return a error
 		 */
 		if ( is_wp_error( $user ) ) {
-			$error_code = ! empty( $user->get_error_code() ) ? $user->get_error_code() : 'invalid login';
+			$error_code = (! empty( $user->get_error_code() ) ? $user->get_error_code() : 'invalid login')." | ".$user->get_error_message();
 			throw new UserError( esc_html( $error_code ) );
 		}
 
