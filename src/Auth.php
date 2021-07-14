@@ -132,6 +132,7 @@ class Auth {
 		 * Only allow the currently signed in user access to a JWT token
 		 */
 		if ( true === $cap_check && get_current_user_id() !== $user->ID || 0 === $user->ID ) {
+			self::set_status(400);
 			return new \WP_Error( 'graphql-jwt-no-permissions', __( 'Only the user requesting a token can get a token issued for them', 'wp-graphql-jwt-authentication' ) );
 		}
 
@@ -454,7 +455,7 @@ class Auth {
 			return true;
 
 		} else {
-
+			self::set_status(401);
 			return new \WP_Error( 'graphql-jwt-auth-cannot-revoke-secret', __( 'The JWT Auth Secret cannot be revoked for this user', 'wp-graphql-jwt-authentication' ) );
 
 		}
@@ -494,7 +495,7 @@ class Auth {
 			return true;
 
 		} else {
-
+			self::set_status(401);
 			return new \WP_Error( 'graphql-jwt-auth-cannot-unrevoke-secret', __( 'The JWT Auth Secret cannot be unrevoked for this user', 'wp-graphql-jwt-authentication' ) );
 
 		}
@@ -586,6 +587,8 @@ class Auth {
 		 * The Token is decoded now validate the iss
 		 */
 		if ( ! isset( $token->iss ) || get_bloginfo( 'url' ) !== $token->iss ) {
+			// See https://github.com/wp-graphql/wp-graphql-jwt-authentication/issues/111
+			self::set_status(401);
 			return new \WP_Error( 'invalid-jwt', __( 'The iss do not match with this server', 'wp-graphql-jwt-authentication' ) );
 		}
 
@@ -593,6 +596,7 @@ class Auth {
 		 * So far so good, validate the user id in the token
 		 */
 		if ( ! isset( $token->data->user->id ) ) {
+			self::set_status(401);
 			return new \WP_Error( 'invalid-jwt', __( 'User ID not found in the token', 'wp-graphql-jwt-authentication' ) );
 		}
 
@@ -602,6 +606,7 @@ class Auth {
 		if ( isset( $token->data->user->user_secret ) ) {
 
 			if ( Auth::is_jwt_secret_revoked( $token->data->user->id ) ) {
+				self::set_status(401);
 				return new \WP_Error( 'invalid-jwt', __( 'The User Secret does not match or has been revoked for this user', 'wp-graphql-jwt-authentication' ) );
 			}
 		}
