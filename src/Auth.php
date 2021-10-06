@@ -583,9 +583,19 @@ class Auth {
 		}
 
 		/**
+		 * Allow multiple domains to be used as token iss value
+		 * This is useful if you want to make your token valid over several domains
+		 * Default value is the current site url
+		 * Used along with the 'graphql_jwt_auth_token_before_sign' filter
+		 */
+
+		$allowed_domains = array(get_bloginfo('url'));
+		$allowed_domains = apply_filters('graphql_jwt_auth_iss_allowed_domains', $allowed_domains);
+
+		/**
 		 * The Token is decoded now validate the iss
 		 */
-		if ( ! isset( $token->iss ) || get_bloginfo( 'url' ) !== $token->iss ) {
+		if ( ! isset( $token->iss ) || !in_array($token->iss, $allowed_domains) ) {
 			return new \WP_Error( 'invalid-jwt', __( 'The iss do not match with this server', 'wp-graphql-jwt-authentication' ) );
 		}
 
