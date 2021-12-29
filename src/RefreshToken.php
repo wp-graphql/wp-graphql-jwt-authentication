@@ -33,6 +33,10 @@ class RefreshToken {
 						'type'        => 'String',
 						'description' => __( 'JWT Token that can be used in future requests for Authentication', 'wp-graphql-jwt-authentication' ),
 					],
+					'authExpiration' => [
+                        'type' => 'String',
+                        'description' => __('The expiration for the JWT Token for the user. If not set custom for the user', 'wp-graphql-jwt-authentication'),
+                    ],
 				],
 				'mutateAndGetPayload' => function( $input ) {
 					$refresh_token = ! empty( $input['jwtRefreshToken'] ) ? Auth::validate_token( $input['jwtRefreshToken'] ) : null;
@@ -44,8 +48,9 @@ class RefreshToken {
 
 					$user = new \WP_User( $id );
 					$auth_token = Auth::get_token( $user, false );
+					$auth_expiration = Auth::get_token_expiration();
 
-					return [ 'authToken' => $auth_token ];
+					return [ 'authToken' => $auth_token, 'authExpiration' => $auth_expiration ];
 				},
 			]
 		);
