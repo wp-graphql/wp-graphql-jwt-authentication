@@ -21,6 +21,7 @@ class AuthenticationTest extends \Codeception\TestCase\WPTestCase {
 
 		$_SERVER['HTTP_AUTHORIZATION'] = 'Bearer goo';
 
+		add_filter( 'graphql_debug_enabled', '__return_true' );
 		add_filter( 'graphql_jwt_auth_secret_key', function() {
 			return 'your-secret-token';
 		});
