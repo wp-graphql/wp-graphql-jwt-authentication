@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => 'e09174b283f67cd17517d966c90d8800f66e1854',
+    'reference' => 'f4518357b5349b7325e8c974f5deec2cdcf1ae1a',
     'name' => 'wp-graphql/wp-graphql-jwt-authentication',
   ),
   'versions' => 
@@ -191,12 +191,12 @@
     ),
     'firebase/php-jwt' => 
     array (
-      'pretty_version' => 'v5.5.1',
-      'version' => '5.5.1.0',
+      'pretty_version' => 'v6.1.0',
+      'version' => '6.1.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '83b609028194aa042ea33b5af2d41a7427de80e6',
+      'reference' => 'fbb2967a3a68b07e37678c00c0cf51165051495f',
     ),
     'flow/jsonpath' => 
     array (
@@ -947,7 +947,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => 'e09174b283f67cd17517d966c90d8800f66e1854',
+      'reference' => 'f4518357b5349b7325e8c974f5deec2cdcf1ae1a',
     ),
     'zordius/lightncandy' => 
     array (

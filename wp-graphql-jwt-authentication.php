@@ -192,7 +192,7 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 
 				$jwt_secret = Auth::get_secret_key();
 				if ( empty( $jwt_secret ) || 'graphql-jwt-auth' === $jwt_secret ) {
-					throw new \Exception( __( 'You must define the GraphQL JWT Auth secret to use the WPGraphQL JWT Authentication plugin.', 'graphql-jwt-auth' ) );
+					graphql_debug( __( 'You must define the GraphQL JWT Auth secret to use the WPGraphQL JWT Authentication plugin.', 'graphql-jwt-auth' ) );
 				} else {
 					$token = Auth::validate_token();
 					if ( is_wp_error( $token ) ) {
