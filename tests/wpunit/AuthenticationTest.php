@@ -17,9 +17,13 @@ class AuthenticationTest extends \Codeception\TestCase\WPTestCase {
 	 * This function is run before each method
 	 * @since 0.0.5
 	 */
-	public function setUp() {
+	public function setUp(): void {
 
 		$_SERVER['HTTP_AUTHORIZATION'] = 'Bearer goo';
+
+		add_filter( 'graphql_jwt_auth_secret_key', function() {
+			return 'your-secret-token';
+		});
 
 		parent::setUp();
 
@@ -31,8 +35,8 @@ class AuthenticationTest extends \Codeception\TestCase\WPTestCase {
 
 
 		$this->login_mutation = '
-		mutation LoginUser( $input:LoginInput! ){ 
-			login( input:$input ) {  
+		mutation LoginUser( $input:LoginInput! ){
+			login( input:$input ) {
 				authToken
 				user {
 					username
@@ -46,7 +50,7 @@ class AuthenticationTest extends \Codeception\TestCase\WPTestCase {
 						}
 					}
 				}
-			} 
+			}
 		}';
 
 
@@ -56,7 +60,7 @@ class AuthenticationTest extends \Codeception\TestCase\WPTestCase {
 	 * Runs after each method.
 	 * @since 0.0.5
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 	}
 
@@ -68,13 +72,16 @@ class AuthenticationTest extends \Codeception\TestCase\WPTestCase {
 		/**
 		 * Run the GraphQL query
 		 */
-		$actual = do_graphql_request( $this->login_mutation, 'LoginUser', [
-			'input' => [
-				'username' => 'testuser',
-				'password' => 'badPassword',
-				'clientMutationId' => uniqid(),
+		$actual = graphql( [
+			'query' => $this->login_mutation,
+			'variables' => [
+				'input' => [
+					'username' => 'testuser',
+					'password' => 'badPassword',
+					'clientMutationId' => uniqid(),
+				]
 			]
-		] );
+		]);
 
 		/**
 		 * Assert that a bad password will throw an error
@@ -103,7 +110,7 @@ class AuthenticationTest extends \Codeception\TestCase\WPTestCase {
 		/**
 		 * Create the page
 		 */
-		$page_id = $this->factory->post->create( $args );
+		$page_id = $this->factory()->post->create( $args );
 
 		/**
 		 * Create the global ID based on the post_type and the created $id
@@ -113,13 +120,16 @@ class AuthenticationTest extends \Codeception\TestCase\WPTestCase {
 		/**
 		 * Run the GraphQL query
 		 */
-		$actual = do_graphql_request( $this->login_mutation, 'LoginUser', [
-			'input' => [
-				'username' => 'testuser',
-				'password' => 'testPassword',
-				'clientMutationId' => uniqid(),
+		$actual = graphql( [
+			'query' => $this->login_mutation,
+			'variables' => [
+				'input' => [
+					'username' => 'testuser',
+					'password' => 'testPassword',
+					'clientMutationId' => uniqid(),
+				]
 			]
-		] );
+		]);
 
 		codecept_debug( $actual );
 
@@ -160,11 +170,14 @@ class AuthenticationTest extends \Codeception\TestCase\WPTestCase {
 		/**
 		 * Run the GraphQL query
 		 */
-		$actual = do_graphql_request( $this->login_mutation, 'LoginUser', [
-			'input' => [
-				'username' => 'testuser',
-				'password' => 'testPassword',
-				'clientMutationId' => uniqid(),
+		$actual = graphql( [
+			'query' => $this->login_mutation,
+			'variables' => [
+				'input' => [
+					'username' => 'testuser',
+					'password' => 'testPassword',
+					'clientMutationId' => uniqid(),
+				]
 			]
 		] );
 
@@ -187,13 +200,16 @@ class AuthenticationTest extends \Codeception\TestCase\WPTestCase {
 		/**
 		 * Run the GraphQL query
 		 */
-		$actual = do_graphql_request( $this->login_mutation, 'LoginUser', [
-			'input' => [
-				'username' => 'testuser',
-				'password' => 'testPassword',
-				'clientMutationId' => uniqid(),
+		$actual = graphql( [
+			'query' => $this->login_mutation,
+			'variables' => [
+				'input' => [
+					'username' => 'testuser',
+					'password' => 'testPassword',
+					'clientMutationId' => uniqid(),
+				]
 			]
-		] );
+		]);
 
 		/**
 		 * Assert that a bad password will throw an error
