@@ -130,7 +130,11 @@ The plugin offers some filters to hook into.
 **Note: For security, we highly recommend, that the Auth Token is short lived. So do not set this higher than 300 seconds unless you know what you are doing.**
 
 ```php
-add_filter('graphql_jwt_auth_expire', 60);
+function custom_jwt_expiration( $expiration ) {
+    return 60;
+}
+
+add_filter('graphql_jwt_auth_expire', 'custom_jwt_expiration', 10);
 ```
 
 - Argument: Expiration in seconds
