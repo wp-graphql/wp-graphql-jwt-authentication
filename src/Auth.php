@@ -48,6 +48,14 @@ class Auth {
 		}
 
 		/**
+		 * Do whatever you need before authenticating the user.
+		 *
+		 * @param string $username Username as sent by the user
+		 * @param string $password Password as sent by the user
+		 */
+		do_action( 'graphql_jwt_auth_before_authenticate', $username, $password );
+
+		/**
 		 * Authenticate the user and get the Authenticated user object in response
 		 */
 		$user = self::authenticate_user( $username, $password );
@@ -76,7 +84,12 @@ class Auth {
 
 		/**
 		 * Let the user modify the data before send it back
+		 *
+		 * @param \WP_User $user   		The authenticated user
+		 * @param array    $response 	The default response
 		 */
+		$response = apply_filters( 'graphql_jwt_auth_after_authenticate', $user, $response );
+
 		return ! empty( $response ) ? $response : [];
 	}
 
