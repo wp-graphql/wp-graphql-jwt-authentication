@@ -659,10 +659,15 @@ class Auth {
 	public static function get_auth_header() {
 
 		/**
+		 * Filter target HTTP Header.
+		 */
+		$header_name = apply_filters( 'graphql_jwt_auth_header_name', 'HTTP_AUTHORIZATION' );
+
+		/**
 		 * Looking for the HTTP_AUTHORIZATION header, if not present just
 		 * return the user.
 		 */
-		$auth_header = isset( $_SERVER['HTTP_AUTHORIZATION'] ) ? $_SERVER['HTTP_AUTHORIZATION'] : false;
+		$auth_header = isset( $_SERVER[ $header_name] ) ? $_SERVER[ $header_name ] : false;
 
 		/**
 		 * Double check for different auth header string (server dependent)
