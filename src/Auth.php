@@ -584,8 +584,6 @@ class Auth {
 		 */
 		JWT::$leeway = 60;
 
-		codecept_debug( [ 'tokenYo' => $token ] );
-
 		try {
 			$token = ! empty( $token ) ? JWT::decode( $token, new Key( self::get_secret_key(), 'HS256') ) : null;
 		} catch ( Exception $exception ) {
