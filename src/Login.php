@@ -49,7 +49,7 @@ class Login {
 				],
 				'mutateAndGetPayload' => function( $input, AppContext $context, ResolveInfo $info ) {
 					// Login the user in and get an authToken and user in response.
-					return Auth::login_and_get_token( sanitize_user( $input['username'] ), trim( $input['password'] ) );
+					return Auth::login_and_get_token( sanitize_user( $input['username'] ), trim( $input['password'] ),$input );
 				},
 			]
 		);
