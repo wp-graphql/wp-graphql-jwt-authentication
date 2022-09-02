@@ -50,7 +50,6 @@ class Auth {
 		}
 
 		/**
-		 * Check filter : wp_authenticate_user
 		 * Add captcha to $_POST for orthers modules
 		 */
 		if( GRAPHQL_JWT_REQUIRE_CAPTCHA ) {
@@ -59,7 +58,6 @@ class Auth {
 			} 
 			
 			$_POST['g-recaptcha-response'] = $gRecaptchaResponse;
-			apply_filters('wp_authenticate_user', $username, $password);
 		}
 		
 
