@@ -370,10 +370,19 @@ class Auth {
 	 */
 	protected static function authenticate_user( $username, $password ) {
 
-		/**
-		 * Try to authenticate the user with the passed credentials
-		 */
-		$user = wp_authenticate( sanitize_user( $username ), trim( $password ) );
+		if ( defined( 'GRAPHQL_JWT_AUTH_SET_COOKIES' ) && ! empty( GRAPHQL_JWT_AUTH_SET_COOKIES ) && GRAPHQL_JWT_AUTH_SET_COOKIES ) {
+			$credentials = [
+				'user_login'  => sanitize_user( $username ),
+				'user_password'  => trim( $password ),
+				'remember'  => false,
+			];
+
+			 // Try to authenticate the user with the passed credentials, log him in and set cookies
+			$user = wp_signon( $credentials, true );
+		} else {
+			 // Try to authenticate the user with the passed credentials
+			$user = wp_authenticate( sanitize_user( $username ), trim( $password ) );
+		}
 
 		/**
 		 * If the authentication fails return a error
