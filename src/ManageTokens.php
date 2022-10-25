@@ -342,9 +342,7 @@ class ManageTokens {
 		 *
 		 * Might need a patch to core to allow for individual filtering.
 		 */
-		$response->set_headers(
-			[ 'Access-Control-Expose-Headers' => 'X-WP-Total, X-WP-TotalPages, X-JWT-Refresh' ]
-		);
+		$response->header( 'Access-Control-Expose-Headers', 'X-WP-Total, X-WP-TotalPages, X-JWT-Refresh', true );
 
 		$refresh_token = null;
 
@@ -357,7 +355,7 @@ class ManageTokens {
 		}
 
 		if ( $refresh_token ) {
-			$response->set_headers( [ 'X-JWT-Refresh' => $refresh_token ] );
+			$response->header( 'X-JWT-Refresh', $refresh_token, true );
 		}
 
 		return $response;
