@@ -353,7 +353,7 @@ class Auth {
 	 */
 	protected static function authenticate_user( $username, $password ) {
 
-		if (defined( 'GRAPHQL_JWT_AUTH_SET_COOKIES' ) && ! empty( GRAPHQL_JWT_AUTH_SET_COOKIES ) && GRAPHQL_JWT_AUTH_SET_COOKIES) {
+		if ( defined( 'GRAPHQL_JWT_AUTH_SET_COOKIES' ) && ! empty( GRAPHQL_JWT_AUTH_SET_COOKIES ) && GRAPHQL_JWT_AUTH_SET_COOKIES ) {
 			$credentials = [
 				'user_login'  => sanitize_user( $username ),
 				'user_password'  => trim( $password ),
