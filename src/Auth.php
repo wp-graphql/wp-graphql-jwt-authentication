@@ -608,7 +608,7 @@ class Auth {
 			/**
              * Check if the refresh token is not provided as auth token
              */
-			if ( $refresh===false) {
+			if ( $refresh === false ) {
 				return new \WP_Error( 'invalid-jwt', __( 'Refresh token is not allowd as auth token!', 'wp-graphql-jwt-authentication' ) );
 			}
 			
