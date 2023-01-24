@@ -17,7 +17,7 @@
     "wpunit-test": "vendor/bin/codecept run wpunit"
   },
   "require": {
-    "firebase/php-jwt": "6.1.0"
+    "firebase/php-jwt": "^6.1.0"
   },
   "require-dev": {
     "lucatume/wp-browser": "3.1.0",
