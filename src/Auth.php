@@ -646,6 +646,14 @@ class Auth {
 				self::set_status(401);
 				return new \WP_Error( 'invalid-jwt', __( 'The User Secret does not match or has been revoked for this user', 'wp-graphql-jwt-authentication' ) );
 			}
+
+			/**
+             * Check if the refresh token is not provided as auth token
+             */
+			if ( $refresh === false ) {
+				return new \WP_Error( 'invalid-jwt', __( 'Refresh token is not allowd as auth token!', 'wp-graphql-jwt-authentication' ) );
+			}
+			
 		}
 
 		if ( is_wp_error( $token ) ) {
