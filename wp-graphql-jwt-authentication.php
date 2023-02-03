@@ -197,7 +197,7 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 					$token = Auth::validate_token();
 					if ( is_wp_error( $token ) ) {
 						add_action( 'graphql_before_resolve_field', function() use ( $token ) {
-							throw new \Exception( $token->get_error_code() . ' | ' . $token->get_error_message() );
+							throw new \Exception( esc_html( $token->get_error_message() ) );
 						}, 1 );
 					}
 				}

@@ -388,8 +388,8 @@ class Auth {
 		 * If the authentication fails return a error
 		 */
 		if ( is_wp_error( $user ) ) {
-			$error_code = ! empty( $user->get_error_code() ) ? $user->get_error_code() : 'invalid login';
-			throw new UserError( esc_html( $error_code ) );
+			$error_message = ! empty( $user->get_error_message() ) ? $user->get_error_message() : 'invalid login';
+			throw new UserError( esc_html( $error_message ) );
 		}
 
 		return ! empty( $user ) ? $user : null;
