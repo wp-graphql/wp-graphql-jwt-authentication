@@ -128,7 +128,7 @@ class ManageTokens {
 						}
 
 						if ( is_wp_error( $token ) ) {
-							throw new UserError( esc_html ( $token->get_error_message() ) );
+							throw new UserError( esc_html( $token->get_error_message() ) );
 						}
 
 						return ! empty( $token ) ? $token : null;
