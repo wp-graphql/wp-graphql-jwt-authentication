@@ -18,3 +18,4 @@ c3.php
 .env
 .codeception.yml
 composer.lock
+.github_changelog_generator

@@ -1,4 +1,4 @@
-![Build Status](https://github.com/firebase/php-jwt/actions/workflows/tests.yml/badge.svg)
+[![Build Status](https://travis-ci.org/firebase/php-jwt.png?branch=master)](https://travis-ci.org/firebase/php-jwt)
 [![Latest Stable Version](https://poser.pugx.org/firebase/php-jwt/v/stable)](https://packagist.org/packages/firebase/php-jwt)
 [![Total Downloads](https://poser.pugx.org/firebase/php-jwt/downloads)](https://packagist.org/packages/firebase/php-jwt)
 [![License](https://poser.pugx.org/firebase/php-jwt/license)](https://packagist.org/packages/firebase/php-jwt)
@@ -27,7 +27,6 @@ Example
 -------
 ```php
 use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 
 $key = "example_key";
 $payload = array(
@@ -43,8 +42,8 @@ $payload = array(
  * https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40
  * for a list of spec-compliant algorithms.
  */
-$jwt = JWT::encode($payload, $key, 'HS256');
-$decoded = JWT::decode($jwt, new Key($key, 'HS256'));
+$jwt = JWT::encode($payload, $key);
+$decoded = JWT::decode($jwt, $key, array('HS256'));
 
 print_r($decoded);
 
@@ -63,13 +62,12 @@ $decoded_array = (array) $decoded;
  * Source: http://self-issued.info/docs/draft-ietf-oauth-json-web-token.html#nbfDef
  */
 JWT::$leeway = 60; // $leeway in seconds
-$decoded = JWT::decode($jwt, new Key($key, 'HS256'));
+$decoded = JWT::decode($jwt, $key, array('HS256'));
 ```
 Example with RS256 (openssl)
 ----------------------------
 ```php
 use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 
 $privateKey = <<<EOD
 -----BEGIN RSA PRIVATE KEY-----
@@ -108,7 +106,7 @@ $payload = array(
 $jwt = JWT::encode($payload, $privateKey, 'RS256');
 echo "Encode:\n" . print_r($jwt, true) . "\n";
 
-$decoded = JWT::decode($jwt, new Key($publicKey, 'RS256'));
+$decoded = JWT::decode($jwt, $publicKey, array('RS256'));
 
 /*
  NOTE: This will now be an object instead of an associative array. To get
@@ -123,9 +121,6 @@ Example with a passphrase
 -------------------------
 
 ```php
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
-
 // Your passphrase
 $passphrase = '[YOUR_PASSPHRASE]';
 
@@ -152,7 +147,7 @@ echo "Encode:\n" . print_r($jwt, true) . "\n";
 // Get public key from the private key, or pull from from a file.
 $publicKey = openssl_pkey_get_details($privateKey)['key'];
 
-$decoded = JWT::decode($jwt, new Key($publicKey, 'RS256'));
+$decoded = JWT::decode($jwt, $publicKey, array('RS256'));
 echo "Decode:\n" . print_r((array) $decoded, true) . "\n";
 ```
 
@@ -160,7 +155,6 @@ Example with EdDSA (libsodium and Ed25519 signature)
 ----------------------------
 ```php
 use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 
 // Public and private keys are expected to be Base64 encoded. The last
 // non-empty line is used so that keys can be generated with
@@ -183,7 +177,7 @@ $payload = array(
 $jwt = JWT::encode($payload, $privateKey, 'EdDSA');
 echo "Encode:\n" . print_r($jwt, true) . "\n";
 
-$decoded = JWT::decode($jwt, new Key($publicKey, 'EdDSA'));
+$decoded = JWT::decode($jwt, $publicKey, array('EdDSA'));
 echo "Decode:\n" . print_r((array) $decoded, true) . "\n";
 ````
 
@@ -198,43 +192,13 @@ use Firebase\JWT\JWT;
 // this endpoint: https://www.gstatic.com/iap/verify/public_key-jwk
 $jwks = ['keys' => []];
 
-// JWK::parseKeySet($jwks) returns an associative array of **kid** to Firebase\JWT\Key
-// objects. Pass this as the second parameter to JWT::decode.
-JWT::decode($payload, JWK::parseKeySet($jwks));
-```
-
-Miscellaneous
--------------
-
-#### Casting to array
-
-The return value of `JWT::decode` is the generic PHP object `stdClass`. If you'd like to handle with arrays
-instead, you can do the following:
-
-```php
-// return type is stdClass
-$decoded = JWT::decode($payload, $keys);
-
-// cast to array
-$decoded = json_decode(json_encode($decoded), true);
+// JWK::parseKeySet($jwks) returns an associative array of **kid** to private
+// key. Pass this as the second parameter to JWT::decode.
+JWT::decode($payload, JWK::parseKeySet($jwks), $supportedAlgorithm);
 ```
 
 Changelog
 ---------
-
-#### 6.1.0 / 2022-03-23
-
- - Drop support for PHP 5.3, 5.4, 5.5, 5.6, and 7.0
- - Add parameter typing and return types where possible
-
-#### 6.0.0 / 2022-01-24
-
- - **Backwards-Compatibility Breaking Changes**: See the [Release Notes](https://github.com/firebase/php-jwt/releases/tag/v6.0.0) for more information.
- - New Key object to prevent key/algorithm type confusion (#365)
- - Add JWK support (#273)
- - Add ES256 support (#256)
- - Add ES384 support (#324)
- - Add Ed25519 support (#343)
 
 #### 5.0.0 / 2017-06-26
 - Support RS384 and RS512.
