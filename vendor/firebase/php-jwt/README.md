@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/firebase/php-jwt.png?branch=master)](https://travis-ci.org/firebase/php-jwt)
+![Build Status](https://github.com/firebase/php-jwt/actions/workflows/tests.yml/badge.svg)
 [![Latest Stable Version](https://poser.pugx.org/firebase/php-jwt/v/stable)](https://packagist.org/packages/firebase/php-jwt)
 [![Total Downloads](https://poser.pugx.org/firebase/php-jwt/downloads)](https://packagist.org/packages/firebase/php-jwt)
 [![License](https://poser.pugx.org/firebase/php-jwt/license)](https://packagist.org/packages/firebase/php-jwt)
@@ -27,14 +27,15 @@ Example
 -------
 ```php
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
-$key = "example_key";
-$payload = array(
-    "iss" => "http://example.org",
-    "aud" => "http://example.com",
-    "iat" => 1356999524,
-    "nbf" => 1357000000
-);
+$key = 'example_key';
+$payload = [
+    'iss' => 'http://example.org',
+    'aud' => 'http://example.com',
+    'iat' => 1356999524,
+    'nbf' => 1357000000
+];
 
 /**
  * IMPORTANT:
@@ -42,8 +43,8 @@ $payload = array(
  * https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40
  * for a list of spec-compliant algorithms.
  */
-$jwt = JWT::encode($payload, $key);
-$decoded = JWT::decode($jwt, $key, array('HS256'));
+$jwt = JWT::encode($payload, $key, 'HS256');
+$decoded = JWT::decode($jwt, new Key($key, 'HS256'));
 
 print_r($decoded);
 
@@ -62,12 +63,13 @@ $decoded_array = (array) $decoded;
  * Source: http://self-issued.info/docs/draft-ietf-oauth-json-web-token.html#nbfDef
  */
 JWT::$leeway = 60; // $leeway in seconds
-$decoded = JWT::decode($jwt, $key, array('HS256'));
+$decoded = JWT::decode($jwt, new Key($key, 'HS256'));
 ```
 Example with RS256 (openssl)
 ----------------------------
 ```php
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 $privateKey = <<<EOD
 -----BEGIN RSA PRIVATE KEY-----
@@ -96,17 +98,17 @@ ehde/zUxo6UvS7UrBQIDAQAB
 -----END PUBLIC KEY-----
 EOD;
 
-$payload = array(
-    "iss" => "example.org",
-    "aud" => "example.com",
-    "iat" => 1356999524,
-    "nbf" => 1357000000
-);
+$payload = [
+    'iss' => 'example.org',
+    'aud' => 'example.com',
+    'iat' => 1356999524,
+    'nbf' => 1357000000
+];
 
 $jwt = JWT::encode($payload, $privateKey, 'RS256');
 echo "Encode:\n" . print_r($jwt, true) . "\n";
 
-$decoded = JWT::decode($jwt, $publicKey, array('RS256'));
+$decoded = JWT::decode($jwt, new Key($publicKey, 'RS256'));
 
 /*
  NOTE: This will now be an object instead of an associative array. To get
@@ -121,6 +123,9 @@ Example with a passphrase
 -------------------------
 
 ```php
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+
 // Your passphrase
 $passphrase = '[YOUR_PASSPHRASE]';
 
@@ -134,12 +139,12 @@ $privateKey = openssl_pkey_get_private(
     $passphrase
 );
 
-$payload = array(
-    "iss" => "example.org",
-    "aud" => "example.com",
-    "iat" => 1356999524,
-    "nbf" => 1357000000
-);
+$payload = [
+    'iss' => 'example.org',
+    'aud' => 'example.com',
+    'iat' => 1356999524,
+    'nbf' => 1357000000
+];
 
 $jwt = JWT::encode($payload, $privateKey, 'RS256');
 echo "Encode:\n" . print_r($jwt, true) . "\n";
@@ -147,7 +152,7 @@ echo "Encode:\n" . print_r($jwt, true) . "\n";
 // Get public key from the private key, or pull from from a file.
 $publicKey = openssl_pkey_get_details($privateKey)['key'];
 
-$decoded = JWT::decode($jwt, $publicKey, array('RS256'));
+$decoded = JWT::decode($jwt, new Key($publicKey, 'RS256'));
 echo "Decode:\n" . print_r((array) $decoded, true) . "\n";
 ```
 
@@ -155,6 +160,7 @@ Example with EdDSA (libsodium and Ed25519 signature)
 ----------------------------
 ```php
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 // Public and private keys are expected to be Base64 encoded. The last
 // non-empty line is used so that keys can be generated with
@@ -167,17 +173,17 @@ $privateKey = base64_encode(sodium_crypto_sign_secretkey($keyPair));
 
 $publicKey = base64_encode(sodium_crypto_sign_publickey($keyPair));
 
-$payload = array(
-    "iss" => "example.org",
-    "aud" => "example.com",
-    "iat" => 1356999524,
-    "nbf" => 1357000000
-);
+$payload = [
+    'iss' => 'example.org',
+    'aud' => 'example.com',
+    'iat' => 1356999524,
+    'nbf' => 1357000000
+];
 
 $jwt = JWT::encode($payload, $privateKey, 'EdDSA');
 echo "Encode:\n" . print_r($jwt, true) . "\n";
 
-$decoded = JWT::decode($jwt, $publicKey, array('EdDSA'));
+$decoded = JWT::decode($jwt, new Key($publicKey, 'EdDSA'));
 echo "Decode:\n" . print_r((array) $decoded, true) . "\n";
 ````
 
@@ -192,71 +198,115 @@ use Firebase\JWT\JWT;
 // this endpoint: https://www.gstatic.com/iap/verify/public_key-jwk
 $jwks = ['keys' => []];
 
-// JWK::parseKeySet($jwks) returns an associative array of **kid** to private
-// key. Pass this as the second parameter to JWT::decode.
-JWT::decode($payload, JWK::parseKeySet($jwks), $supportedAlgorithm);
+// JWK::parseKeySet($jwks) returns an associative array of **kid** to Firebase\JWT\Key
+// objects. Pass this as the second parameter to JWT::decode.
+JWT::decode($payload, JWK::parseKeySet($jwks));
 ```
 
-Changelog
----------
+Using Cached Key Sets
+---------------------
 
-#### 5.0.0 / 2017-06-26
-- Support RS384 and RS512.
-  See [#117](https://github.com/firebase/php-jwt/pull/117). Thanks [@joostfaassen](https://github.com/joostfaassen)!
-- Add an example for RS256 openssl.
-  See [#125](https://github.com/firebase/php-jwt/pull/125). Thanks [@akeeman](https://github.com/akeeman)!
-- Detect invalid Base64 encoding in signature.
-  See [#162](https://github.com/firebase/php-jwt/pull/162). Thanks [@psignoret](https://github.com/psignoret)!
-- Update `JWT::verify` to handle OpenSSL errors.
-  See [#159](https://github.com/firebase/php-jwt/pull/159). Thanks [@bshaffer](https://github.com/bshaffer)!
-- Add `array` type hinting to `decode` method
-  See [#101](https://github.com/firebase/php-jwt/pull/101). Thanks [@hywak](https://github.com/hywak)!
-- Add all JSON error types.
-  See [#110](https://github.com/firebase/php-jwt/pull/110). Thanks [@gbalduzzi](https://github.com/gbalduzzi)!
-- Bugfix 'kid' not in given key list.
-  See [#129](https://github.com/firebase/php-jwt/pull/129). Thanks [@stampycode](https://github.com/stampycode)!
-- Miscellaneous cleanup, documentation and test fixes.
-  See [#107](https://github.com/firebase/php-jwt/pull/107), [#115](https://github.com/firebase/php-jwt/pull/115),
-  [#160](https://github.com/firebase/php-jwt/pull/160), [#161](https://github.com/firebase/php-jwt/pull/161), and
-  [#165](https://github.com/firebase/php-jwt/pull/165). Thanks [@akeeman](https://github.com/akeeman),
-  [@chinedufn](https://github.com/chinedufn), and [@bshaffer](https://github.com/bshaffer)!
+The `CachedKeySet` class can be used to fetch and cache JWKS (JSON Web Key Sets) from a public URI.
+This has the following advantages:
 
-#### 4.0.0 / 2016-07-17
-- Add support for late static binding. See [#88](https://github.com/firebase/php-jwt/pull/88) for details. Thanks to [@chappy84](https://github.com/chappy84)!
-- Use static `$timestamp` instead of `time()` to improve unit testing. See [#93](https://github.com/firebase/php-jwt/pull/93) for details. Thanks to [@josephmcdermott](https://github.com/josephmcdermott)!
-- Fixes to exceptions classes. See [#81](https://github.com/firebase/php-jwt/pull/81) for details. Thanks to [@Maks3w](https://github.com/Maks3w)!
-- Fixes to PHPDoc. See [#76](https://github.com/firebase/php-jwt/pull/76) for details. Thanks to [@akeeman](https://github.com/akeeman)!
+1. The results are cached for performance.
+2. If an unrecognized key is requested, the cache is refreshed, to accomodate for key rotation.
+3. If rate limiting is enabled, the JWKS URI will not make more than 10 requests a second.
 
-#### 3.0.0 / 2015-07-22
-- Minimum PHP version updated from `5.2.0` to `5.3.0`.
-- Add `\Firebase\JWT` namespace. See
-[#59](https://github.com/firebase/php-jwt/pull/59) for details. Thanks to
-[@Dashron](https://github.com/Dashron)!
-- Require a non-empty key to decode and verify a JWT. See
-[#60](https://github.com/firebase/php-jwt/pull/60) for details. Thanks to
-[@sjones608](https://github.com/sjones608)!
-- Cleaner documentation blocks in the code. See
-[#62](https://github.com/firebase/php-jwt/pull/62) for details. Thanks to
-[@johanderuijter](https://github.com/johanderuijter)!
+```php
+use Firebase\JWT\CachedKeySet;
+use Firebase\JWT\JWT;
 
-#### 2.2.0 / 2015-06-22
-- Add support for adding custom, optional JWT headers to `JWT::encode()`. See
-[#53](https://github.com/firebase/php-jwt/pull/53/files) for details. Thanks to
-[@mcocaro](https://github.com/mcocaro)!
+// The URI for the JWKS you wish to cache the results from
+$jwksUri = 'https://www.gstatic.com/iap/verify/public_key-jwk';
 
-#### 2.1.0 / 2015-05-20
-- Add support for adding a leeway to `JWT:decode()` that accounts for clock skew
-between signing and verifying entities. Thanks to [@lcabral](https://github.com/lcabral)!
-- Add support for passing an object implementing the `ArrayAccess` interface for
-`$keys` argument in `JWT::decode()`. Thanks to [@aztech-dev](https://github.com/aztech-dev)!
+// Create an HTTP client (can be any PSR-7 compatible HTTP client)
+$httpClient = new GuzzleHttp\Client();
 
-#### 2.0.0 / 2015-04-01
-- **Note**: It is strongly recommended that you update to > v2.0.0 to address
-  known security vulnerabilities in prior versions when both symmetric and
-  asymmetric keys are used together.
-- Update signature for `JWT::decode(...)` to require an array of supported
-  algorithms to use when verifying token signatures.
+// Create an HTTP request factory (can be any PSR-17 compatible HTTP request factory)
+$httpFactory = new GuzzleHttp\Psr\HttpFactory();
 
+// Create a cache item pool (can be any PSR-6 compatible cache item pool)
+$cacheItemPool = Phpfastcache\CacheManager::getInstance('files');
+
+$keySet = new CachedKeySet(
+    $jwksUri,
+    $httpClient,
+    $httpFactory,
+    $cacheItemPool,
+    null, // $expiresAfter int seconds to set the JWKS to expire
+    true  // $rateLimit    true to enable rate limit of 10 RPS on lookup of invalid keys
+);
+
+$jwt = 'eyJhbGci...'; // Some JWT signed by a key from the $jwkUri above
+$decoded = JWT::decode($jwt, $keySet);
+```
+
+Miscellaneous
+-------------
+
+#### Exception Handling
+
+When a call to `JWT::decode` is invalid, it will throw one of the following exceptions:
+
+```php
+use Firebase\JWT\JWT;
+use Firebase\JWT\SignatureInvalidException;
+use Firebase\JWT\BeforeValidException;
+use Firebase\JWT\ExpiredException;
+use DomainException;
+use InvalidArgumentException;
+use UnexpectedValueException;
+
+try {
+    $decoded = JWT::decode($payload, $keys);
+} catch (InvalidArgumentException $e) {
+    // provided key/key-array is empty or malformed.
+} catch (DomainException $e) {
+    // provided algorithm is unsupported OR
+    // provided key is invalid OR
+    // unknown error thrown in openSSL or libsodium OR
+    // libsodium is required but not available.
+} catch (SignatureInvalidException $e) {
+    // provided JWT signature verification failed.
+} catch (BeforeValidException $e) {
+    // provided JWT is trying to be used before "nbf" claim OR
+    // provided JWT is trying to be used before "iat" claim.
+} catch (ExpiredException $e) {
+    // provided JWT is trying to be used after "exp" claim.
+} catch (UnexpectedValueException $e) {
+    // provided JWT is malformed OR
+    // provided JWT is missing an algorithm / using an unsupported algorithm OR
+    // provided JWT algorithm does not match provided key OR
+    // provided key ID in key/key-array is empty or invalid.
+}
+```
+
+All exceptions in the `Firebase\JWT` namespace extend `UnexpectedValueException`, and can be simplified
+like this:
+
+```php
+try {
+    $decoded = JWT::decode($payload, $keys);
+} catch (LogicException $e) {
+    // errors having to do with environmental setup or malformed JWT Keys
+} catch (UnexpectedValueException $e) {
+    // errors having to do with JWT signature and claims
+}
+```
+
+#### Casting to array
+
+The return value of `JWT::decode` is the generic PHP object `stdClass`. If you'd like to handle with arrays
+instead, you can do the following:
+
+```php
+// return type is stdClass
+$decoded = JWT::decode($payload, $keys);
+
+// cast to array
+$decoded = json_decode(json_encode($decoded), true);
+```
 
 Tests
 -----
