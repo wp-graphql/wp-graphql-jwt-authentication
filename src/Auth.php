@@ -40,7 +40,7 @@ class Auth {
 	 * @throws Exception
 	 * @since 0.0.1
 	 */
-	public static function login_and_get_token( $username, $password ) {
+	public static function login_and_get_token( $username, $password, $gRecaptchaResponse ) {
 
 		/**
 		 * First thing, check the secret key if not exist return a error
@@ -48,6 +48,19 @@ class Auth {
 		if ( empty( self::get_secret_key() ) ) {
 			return new UserError( __( 'JWT Auth is not configured correctly. Please contact a site administrator.', 'wp-graphql-jwt-authentication' ) );
 		}
+
+		/**
+		 * Add captcha to $_POST for orthers modules
+		 */
+		if( GRAPHQL_JWT_REQUIRE_CAPTCHA ) {
+			if( empty($gRecaptchaResponse) || is_null($gRecaptchaResponse) ) {
+				throw new UserError( __( 'Captcha is required', 'wp-graphql-jwt-authentication' ) );
+			} 
+			
+			$_POST['g-recaptcha-response'] = $gRecaptchaResponse;
+		}
+		
+
 
 		/**
 		 * Do whatever you need before authenticating the user.

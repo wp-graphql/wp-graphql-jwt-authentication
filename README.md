@@ -121,6 +121,14 @@ mutation RefreshAuthToken {
 }
 ```
 
+## ReCaptcha
+
+To enable the filter : `wp_authenticate_user` and Captcha
+
+```
+define( 'GRAPHQL_JWT_REQUIRE_CAPTCHA', true );
+```
+
 ## Filters
 
 The plugin offers some filters to hook into.
