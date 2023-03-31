@@ -7,7 +7,7 @@
  * Author URI: https://www.wpgraphql.com
  * Text Domain: wp-graphql-jwt-authentication-jwt-authentication
  * Domain Path: /languages
- * Version: 0.4.0
+ * Version: 0.7.0
  * Requires at least: 4.7.0
  * Tested up to: 4.8.3
  * Requires PHP: 5.5
