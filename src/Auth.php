@@ -139,7 +139,7 @@ class Auth {
 	 * @param \WP_User $user  Owner of the token.
 	 * @param bool $cap_check Whether to check capabilities when getting the token
 	 *
-	 * @return null|string
+	 * @return null|string|\WP_Error
 	 */
 	protected static function get_signed_token( $user, $cap_check = true ) {
 
@@ -308,10 +308,10 @@ class Auth {
 	/**
 	 * Public method for getting an Auth token for a given user
 	 *
-	 * @param \WP_USer $user The user to get the token for
+	 * @param \WP_User $user The user to get the token for
 	 * @param boolean $cap_check Whether to check capabilities. Default is true.
 	 *
-	 * @return null|string
+	 * @return null|string|\WP_Error
 	 */
 	public static function get_token( $user, $cap_check = true ) {
 		return self::get_signed_token( $user, $cap_check );
