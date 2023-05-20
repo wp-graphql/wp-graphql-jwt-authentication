@@ -96,8 +96,8 @@ class ManageTokens {
 							throw new UserError( __( 'The JWT token could not be returned', 'wp-graphql-jwt-authentication' ) );
 						}
 
-						if ( $token instanceof \WP_Error ) {
-							throw new UserError( $token->get_error_message() );
+						if ( is_wp_error( $token ) ) {
+							throw new UserError( esc_html( $token->get_error_message() ) );
 						}
 
 						return ! empty( $token ) ? $token : null;
@@ -127,8 +127,8 @@ class ManageTokens {
 							throw new UserError( __( 'The JWT token could not be returned', 'wp-graphql-jwt-authentication' ) );
 						}
 
-						if ( $token instanceof \WP_Error ) {
-							throw new UserError( $token->get_error_message() );
+						if ( is_wp_error( $token ) ) {
+							throw new UserError( esc_html( $token->get_error_message() ) );
 						}
 
 						return ! empty( $token ) ? $token : null;
@@ -151,8 +151,8 @@ class ManageTokens {
 						$secret = Auth::get_user_jwt_secret( $user_id );
 
 						// If the secret cannot be returned, throw an error.
-						if ( $secret instanceof \WP_Error ) {
-							throw new UserError( $secret->get_error_message() );
+						if ( is_wp_error( $secret ) ) {
+							throw new UserError( esc_html( $secret->get_error_message() ) );
 						}
 
 						// Return the secret.
