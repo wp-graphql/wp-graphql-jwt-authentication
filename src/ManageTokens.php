@@ -346,7 +346,9 @@ class ManageTokens {
 
 		$refresh_token = null;
 
-		$validate_auth_header = Auth::validate_token( str_ireplace( 'Bearer ', '', Auth::get_auth_header() ), false );
+		// Extract the authorization header and validate it.
+		$auth_header          = Auth::get_auth_header() ? Auth::get_auth_header() : '';
+		$validate_auth_header = Auth::validate_token( str_ireplace( 'Bearer ', '', $auth_header ), false );
 
 		if ( ! is_wp_error( $validate_auth_header ) && ! empty( $validate_auth_header->data->user->id ) ) {
 
