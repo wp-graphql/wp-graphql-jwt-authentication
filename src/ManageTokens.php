@@ -364,15 +364,15 @@ class ManageTokens {
 	}
 
 	/**
-	 * Expose the X-JWT-Refresh tokens in the response headers. This allows
-	 * folks to grab new refresh tokens from authenticated requests for subsequent use.
+	 * Expose the X-JWT-Auth and X-JWT-Refresh tokens in the response headers. This
+	 * allows folks to grab new tokens from authenticated requests for subsequent use.
 	 *
 	 * @param array $headers The existing response headers.
 	 *
-	 * @return array
+	 * @return array Response headers, with X-JWT-Auth and X-JWT-Refresh added.
 	 */
 	public static function add_auth_headers_to_response( array $headers ) {
-		$headers['Access-Control-Expose-Headers'] = 'X-JWT-Refresh';
+		$headers['Access-Control-Expose-Headers'] = 'X-JWT-Auth,X-JWT-Refresh';
 
 		return $headers;
 	}
