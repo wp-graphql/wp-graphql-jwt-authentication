@@ -648,6 +648,8 @@ class Auth {
 			}
 		}
 
+		$token = apply_filters( 'graphql_jwt_auth_validate_token', $token );
+
 		if ( is_wp_error( $token ) ) {
 			self::set_status( 403 );
 		}
