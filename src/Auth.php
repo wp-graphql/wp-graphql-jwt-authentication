@@ -172,6 +172,9 @@ class Auth {
 			'data' => [
 				'user' => [
 					'id' => $user->data->ID,
+					'displayName' => $user->data->display_name,
+					'login' => $user->data->user_login,
+					'niceName' => $user->data->user_nicename,
 				],
 			],
 		];
