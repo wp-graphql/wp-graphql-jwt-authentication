@@ -3,7 +3,7 @@
         'name' => 'wp-graphql/wp-graphql-jwt-authentication',
         'pretty_version' => 'dev-develop',
         'version' => 'dev-develop',
-        'reference' => '5d202620ef1989bb94ebe57161b2a58591327b6c',
+        'reference' => '45409857e4ea35e3f97c727b5dfcc057666add06',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -964,7 +964,7 @@
         'wp-graphql/wp-graphql-jwt-authentication' => array(
             'pretty_version' => 'dev-develop',
             'version' => 'dev-develop',
-            'reference' => '5d202620ef1989bb94ebe57161b2a58591327b6c',
+            'reference' => '45409857e4ea35e3f97c727b5dfcc057666add06',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
