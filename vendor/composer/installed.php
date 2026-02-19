@@ -3,7 +3,7 @@
         'name' => 'wp-graphql/wp-graphql-jwt-authentication',
         'pretty_version' => 'dev-develop',
         'version' => 'dev-develop',
-        'reference' => '3dc37ab377471719b07ff26571a8dee1d1c0943e',
+        'reference' => '68770b5a1cc3a429160eac035bf66297b075f45b',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'firebase/php-jwt' => array(
-            'pretty_version' => 'v6.4.0',
-            'version' => '6.4.0.0',
-            'reference' => '4dd1e007f22a927ac77da5a3fbb067b42d3bc224',
+            'pretty_version' => 'v7.0.2',
+            'version' => '7.0.2.0',
+            'reference' => '5645b43af647b6947daac1d0f659dd1fbe8d3b65',
             'type' => 'library',
             'install_path' => __DIR__ . '/../firebase/php-jwt',
             'aliases' => array(),
@@ -22,7 +22,7 @@
         'wp-graphql/wp-graphql-jwt-authentication' => array(
             'pretty_version' => 'dev-develop',
             'version' => 'dev-develop',
-            'reference' => '3dc37ab377471719b07ff26571a8dee1d1c0943e',
+            'reference' => '68770b5a1cc3a429160eac035bf66297b075f45b',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

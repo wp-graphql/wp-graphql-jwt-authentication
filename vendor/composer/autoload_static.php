@@ -7,22 +7,22 @@ namespace Composer\Autoload;
 class ComposerStaticInitb81212723df6ec6a4125604686c14dbf
 {
     public static $prefixLengthsPsr4 = array (
-        'W' => 
+        'W' =>
         array (
             'WPGraphQL\\JWT_Authentication\\' => 29,
         ),
-        'F' => 
+        'F' =>
         array (
             'Firebase\\JWT\\' => 13,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'WPGraphQL\\JWT_Authentication\\' => 
+        'WPGraphQL\\JWT_Authentication\\' =>
         array (
             0 => __DIR__ . '/../..' . '/src',
         ),
-        'Firebase\\JWT\\' => 
+        'Firebase\\JWT\\' =>
         array (
             0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
         ),
@@ -35,6 +35,7 @@ class ComposerStaticInitb81212723df6ec6a4125604686c14dbf
         'Firebase\\JWT\\ExpiredException' => __DIR__ . '/..' . '/firebase/php-jwt/src/ExpiredException.php',
         'Firebase\\JWT\\JWK' => __DIR__ . '/..' . '/firebase/php-jwt/src/JWK.php',
         'Firebase\\JWT\\JWT' => __DIR__ . '/..' . '/firebase/php-jwt/src/JWT.php',
+        'Firebase\\JWT\\JWTExceptionWithPayloadInterface' => __DIR__ . '/..' . '/firebase/php-jwt/src/JWTExceptionWithPayloadInterface.php',
         'Firebase\\JWT\\Key' => __DIR__ . '/..' . '/firebase/php-jwt/src/Key.php',
         'Firebase\\JWT\\SignatureInvalidException' => __DIR__ . '/..' . '/firebase/php-jwt/src/SignatureInvalidException.php',
         'WPGraphQL\\JWT_Authentication\\Auth' => __DIR__ . '/../..' . '/src/Auth.php',
