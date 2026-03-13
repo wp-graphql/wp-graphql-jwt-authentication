@@ -9,7 +9,6 @@
 namespace WPGraphQL\JWT_Authentication;
 
 use GraphQL\Error\UserError;
-use WPGraphQL\Model\User;
 
 /**
  * Class - ManageToken

@@ -3,8 +3,8 @@
 namespace WPGraphQL\JWT_Authentication;
 
 use Exception;
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
+use WPGraphQL\JWT_Authentication\Vendor\Firebase\JWT\JWT;
+use WPGraphQL\JWT_Authentication\Vendor\Firebase\JWT\Key;
 use GraphQL\Error\UserError;
 use WPGraphQL\Model\User;
 

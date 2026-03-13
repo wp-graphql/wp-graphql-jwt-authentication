@@ -12,3 +12,6 @@ modules:
       - WPBrowser
       - Asserts
       - WPLoader
+    config:
+      WPDb:
+        cleanup: false

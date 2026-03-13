@@ -8,10 +8,12 @@ $I->wantTo('Use a Refresh token to get a new AuthToken via GraphQL mutation');
 $username = uniqid();
 $user = $I->haveUserInDatabase( $username, 'administrator', [ 'user_pass' => 'password' ] );
 
+$I->haveHttpHeader('Content-Type', 'application/json');
+
 /**
  * Login with username and password to get the authToken for use in the subsequent Authenticated request
  */
-$I->sendPOST( 'http://wp.localhost/graphql', json_encode([
+$I->sendPOST( '/graphql', json_encode([
 	'query' => '
 		mutation Login($input: LoginInput!) {
 			login( input: $input ) {
@@ -57,7 +59,7 @@ $refreshToken = $response_array['data']['login']['refreshToken'];
  *
  * We don't need any special headers here, we just need to do a "refreshJwtAuthToken" mutation
  */
-$I->sendPOST( 'http://wp.localhost/graphql', json_encode([
+$I->sendPOST( '/graphql', json_encode([
 	'query' => '
 		mutation RefreshJWTAuthToken( $input: RefreshJwtAuthTokenInput! ){
 		  refreshJwtAuthToken( input:$input ) {

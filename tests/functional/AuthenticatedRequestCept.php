@@ -5,10 +5,12 @@ $I->wantTo('Make an authenticated request to generate a Refresh token');
 $username = uniqid();
 $user = $I->haveUserInDatabase( $username, 'administrator', [ 'user_pass' => 'password' ] );
 
+$I->haveHttpHeader('Content-Type', 'application/json');
+
 /**
  * Login with username and password to get the authToken for use in the subsequent Authenticated request
  */
-$I->sendPOST( 'http://wp.localhost/graphql', json_encode([
+$I->sendPOST( '/graphql', json_encode([
 	'query' => '
 		mutation Login($input: LoginInput!) {
 			login( input: $input ) {
@@ -47,7 +49,7 @@ $refreshToken = $response_array['data']['login']['refreshToken'];
  * the current user.
  */
 $I->setHeader( 'Authorization', 'Bearer ' . $authToken );
-$I->sendPOST( 'http://wp.localhost/graphql', json_encode([
+$I->sendPOST( '/graphql', json_encode([
 	'query' => '
 		{
 		  viewer {

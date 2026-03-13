@@ -2,7 +2,10 @@
 $I = new FunctionalTester($scenario);
 $I->wantTo('Get public data without passing authentication headers');
 
-$I->sendPOST( 'http://wp.localhost/graphql', json_encode([
+$I->havePostInDatabase(['post_title' => 'Test Post', 'post_status' => 'publish', 'post_type' => 'post']);
+
+$I->haveHttpHeader('Content-Type', 'application/json');
+$I->sendPOST( '/graphql', json_encode([
 	'query' => '
 	{ 
 		posts { 

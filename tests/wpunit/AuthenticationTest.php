@@ -24,7 +24,7 @@ class AuthenticationTest extends \Codeception\TestCase\WPTestCase {
 
 		add_filter( 'graphql_debug_enabled', '__return_true' );
 		add_filter( 'graphql_jwt_auth_secret_key', function() {
-			return 'your-secret-token';
+			return 'your-secret-token-that-is-long-enough-for-hs256';
 		});
 
 		parent::setUp();

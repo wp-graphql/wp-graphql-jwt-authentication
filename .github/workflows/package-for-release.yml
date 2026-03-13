@@ -1,0 +1,37 @@
+name: Package for Release
+
+on:
+  release:
+    types: [ published ]
+
+jobs:
+  tag:
+    name: Package new release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          extensions: mbstring, intl
+          tools: composer
+      - name: Install dependencies
+        run: |
+          composer install --no-dev --optimize-autoloader
+      - name: Create Artifact
+        run: |
+          mkdir plugin-build
+          composer archive -vvv --format=zip --file="plugin-build/wp-graphql-jwt-authentication"
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wp-graphql-jwt-authentication
+          path: plugin-build/wp-graphql-jwt-authentication.zip
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: plugin-build/wp-graphql-jwt-authentication.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

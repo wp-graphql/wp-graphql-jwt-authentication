@@ -14,13 +14,25 @@
     "test": "vendor/bin/codecept run",
     "functional-test": "vendor/bin/codecept run functional",
     "acceptance-test": "vendor/bin/codecept run acceptance",
-    "wpunit-test": "vendor/bin/codecept run wpunit"
+    "wpunit-test": "vendor/bin/codecept run wpunit",
+    "strauss": [
+      "test -f ./bin/strauss.phar || curl -o bin/strauss.phar -L -C - https://github.com/BrianHenryIE/strauss/releases/download/0.14.0/strauss.phar",
+      "@php bin/strauss.phar",
+      "composer dump-autoload --optimize"
+    ],
+    "post-install-cmd": [
+      "@strauss"
+    ],
+    "post-update-cmd": [
+      "@strauss"
+    ]
   },
   "require": {
-    "firebase/php-jwt": "^6.1.0"
+    "firebase/php-jwt": "^7.0.3"
   },
   "require-dev": {
     "lucatume/wp-browser": "3.1.0",
+    "behat/gherkin": "^4.8 <4.12",
     "codeception/module-asserts": "^1.0",
     "codeception/module-phpbrowser": "^1.0",
     "codeception/module-webdriver": "^1.0",
@@ -29,7 +41,8 @@
     "codeception/module-cli": "^1.0",
     "codeception/util-universalframework": "^1.0",
     "codeception/module-rest": "^1.2",
-    "phpunit/phpunit": "^8.5"
+    "phpunit/phpunit": "^8.5",
+    "wp-cli/wp-cli-bundle": "*"
   },
   "config": {
     "optimize-autoloader": true
@@ -39,7 +52,38 @@
       "WPGraphQL\\JWT_Authentication\\": "src/"
     },
     "classmap": [
-      "src/"
+      "src/",
+      "vendor-prefixed/"
     ]
+  },
+  "archive": {
+    "name": "wp-graphql-jwt-authentication",
+    "exclude": [
+      "/.*",
+      "/bin",
+      "/tests",
+      "/codeception.dist.yml",
+      "/codeception.yml",
+      "/composer.json",
+      "/composer.lock",
+      "/docker-compose.yml",
+      "/Dockerfile"
+    ]
+  },
+  "extra": {
+    "strauss" : {
+      "target_directory": "vendor-prefixed",
+      "namespace_prefix": "WPGraphQL\\JWT_Authentication\\Vendor\\",
+      "classmap_prefix": "WP_GraphQL_JWT_Authentication_Vendor",
+      "constant_prefix": "WPGRAPHQL_JWT_AUTHENTICATION_VENDOR",
+      "delete_vendor_files": true,
+      "include_modified_date": false,
+      "packages" : [
+          "firebase/php-jwt"
+      ],
+      "exclude_from_prefix": {
+          "file_patterns": []
+      }
+    }
   }
 }
