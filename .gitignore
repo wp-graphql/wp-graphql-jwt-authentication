@@ -8,6 +8,8 @@ node_modules/
 coverage/
 build/
 vendor/
+!vendor/composer
+!vendor/autoload.php
 c3.php
 !/tests
 /tests/*.suite.yml
