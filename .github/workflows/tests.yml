@@ -4,8 +4,7 @@ on:
   push:
     branches:
       - master
-    paths:
-      - '**.php'
+      - develop
   pull_request:
     branches:
       - master
