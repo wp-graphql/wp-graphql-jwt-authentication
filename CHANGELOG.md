@@ -1,11 +1,21 @@
 # Changelog
 
+## [v0.7.2](https://github.com/wp-graphql/wp-graphql-jwt-authentication/tree/v0.7.2) (2026-03-13)
+
+[Full Changelog](https://github.com/wp-graphql/wp-graphql-jwt-authentication/compare/v0.7.1...v0.7.2)
+
+**Other Changes:**
+
+- fix: autoloader fix applied [\#191](https://github.com/wp-graphql/wp-graphql-jwt-authentication/pull/191) ([kidunot89](https://github.com/kidunot89))
+- ci: add composer install step before running Docker tests [\#190](https://github.com/wp-graphql/wp-graphql-jwt-authentication/pull/190) ([kidunot89](https://github.com/kidunot89))
+
 ## [v0.7.1](https://github.com/wp-graphql/wp-graphql-jwt-authentication/tree/v0.7.1) (2026-03-13)
 
 [Full Changelog](https://github.com/wp-graphql/wp-graphql-jwt-authentication/compare/v0.7.0...v0.7.1)
 
 **Other Changes:**
 
+- chore: CHANGELOG updated [\#189](https://github.com/wp-graphql/wp-graphql-jwt-authentication/pull/189) ([kidunot89](https://github.com/kidunot89))
 - Upgrade firebase/php-jwt to v7, modernize CI [\#188](https://github.com/wp-graphql/wp-graphql-jwt-authentication/pull/188) ([kidunot89](https://github.com/kidunot89))
 - Allowing the token from validation function to be filtered [\#184](https://github.com/wp-graphql/wp-graphql-jwt-authentication/pull/184) ([davidvexel](https://github.com/davidvexel))
 - \[FIX\] \#173 - PHP 8.1 deprecation warning  [\#180](https://github.com/wp-graphql/wp-graphql-jwt-authentication/pull/180) ([gregrickaby](https://github.com/gregrickaby))
