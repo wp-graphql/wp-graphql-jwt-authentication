@@ -148,7 +148,10 @@ if ( ! class_exists( '\WPGraphQL\JWT_Authentication' ) ) :
 		private function includes() {
 			// Autoload Required Classes.
 			if ( defined( 'WPGRAPHQL_JWT_AUTHENTICATION_AUTOLOAD' ) && true === WPGRAPHQL_JWT_AUTHENTICATION_AUTOLOAD ) {
-				require_once( WPGRAPHQL_JWT_AUTHENTICATION_PLUGIN_DIR . 'vendor/autoload.php' );
+				if ( file_exists( WPGRAPHQL_JWT_AUTHENTICATION_PLUGIN_DIR . 'vendor/autoload.php' ) ) {
+					// Autoload Required Classes.
+					require_once WPGRAPHQL_JWT_AUTHENTICATION_PLUGIN_DIR . 'vendor/autoload.php';
+				}
 			}
 		}
 
