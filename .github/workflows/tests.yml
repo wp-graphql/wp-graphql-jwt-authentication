@@ -4,9 +4,14 @@ on:
   push:
     branches:
       - master
+    paths:
+      - '**.php'
   pull_request:
     branches:
       - master
+      - develop
+    paths:
+      - '**.php'
 
 jobs:
   wpunit:
