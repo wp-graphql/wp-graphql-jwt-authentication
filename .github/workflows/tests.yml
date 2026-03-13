@@ -4,8 +4,7 @@ on:
   push:
     branches:
       - master
-    paths:
-      - '**.php'
+      - develop
   pull_request:
     branches:
       - master
@@ -27,6 +26,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, intl
+          tools: composer
+
+      - name: Install dependencies
+        run: composer install --no-interaction
+
       - name: Setup environment
         run: cp .env.dist .env
 
@@ -44,6 +53,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          extensions: mbstring, intl
+          tools: composer
+
+      - name: Install dependencies
+        run: composer install --no-interaction
 
       - name: Setup environment
         run: cp .env.dist .env
