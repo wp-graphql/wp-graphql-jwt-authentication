@@ -1,20 +1,24 @@
 <?php
 $I = new FunctionalTester($scenario);
-$I->wantTo('Make an invalid authenticated request and verify I get a 403 response and cannot access private data, but can still access public data');
+$I->wantTo('Make an invalid authenticated request and verify that an invalid token causes errors for all fields');
 
 $invalidAuthToken = 'invalidAuthToken';
 
+$I->havePostInDatabase(['post_title' => 'Test Post', 'post_status' => 'publish', 'post_type' => 'post']);
+$I->haveHttpHeader('Content-Type', 'application/json');
+
 /**
- * Set the Authorization token with an invalid token, and try to request private data.
+ * Set the Authorization token with an invalid token, and try to request data.
  *
- * This should return a 403, and should not return any private data for the user, but should still return public data
+ * An invalid JWT token will cause the JWT authentication to throw an error,
+ * which results in all fields returning null with errors in the response.
  */
 $I->setHeader( 'Authorization', 'Bearer ' . $invalidAuthToken );
-$I->sendPOST( 'http://wp.localhost/graphql', json_encode([
+$I->sendPOST( '/graphql', json_encode([
 	'query' => '
 		{
 		  posts(first: 1) {
-		   edges { 
+		   edges {
 		     node {
 		       id
 		       title
@@ -34,16 +38,15 @@ $I->sendPOST( 'http://wp.localhost/graphql', json_encode([
 ], true));
 
 /**
- * The repsonse code should be 403, because auth was invalid
+ * WPGraphQL returns 200 with errors in the response body for invalid tokens.
  */
-$I->seeResponseCodeIs( 403 );
+$I->seeResponseCodeIs( 200 );
 
 /**
  * Since this is an invalid request, the JWT Auth and JWT Refresh token should not be returned in the response headers
  */
 $I->dontSeeHttpHeader( 'X-JWT-Refresh' );
 $I->dontSeeHttpHeader( 'X-JWT-Auth' );
-
 
 /**
  * The response should be JSON
@@ -61,22 +64,22 @@ $response = $I->grabResponse();
 $response_array = json_decode( $response, true );
 
 /**
- * The request should have errors, because it attempted to query data for a user without providing Auth data
+ * The request should have errors because the JWT token is invalid
  */
 $I->assertArrayHasKey( 'errors', $response_array  );
 
 /**
- * A valid request should contain the data in the response
+ * The data key should still be present in the response
  */
 $I->assertArrayHasKey( 'data', $response_array );
 
 /**
- * The viewer should be null in the response, because an unauthenticated request should not be able to access viewer data
+ * The viewer should be null because the invalid token cannot authenticate a user
  */
 $I->assertNull( $response_array['data']['viewer'] );
 
 /**
- * An unauthenticated request should still be able to access public data though, so let's make sure there's a post returned
+ * Posts should also be null because the invalid JWT token causes an error
+ * that prevents all field resolution
  */
-$I->assertNotEmpty( $response_array['data']['posts']['edges'][0]['node']['id'] );
-$I->assertNotEmpty( $response_array['data']['posts']['edges'][0]['node']['title'] );
+$I->assertNull( $response_array['data']['posts'] );

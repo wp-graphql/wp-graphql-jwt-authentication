@@ -1,6 +1,12 @@
 <?php
+/**
+ * @license BSD-3-Clause
+ *
+ * Modified by jasonbahl using Strauss.
+ * @see https://github.com/BrianHenryIE/strauss
+ */
 
-namespace Firebase\JWT;
+namespace WPGraphQL\JWT_Authentication\Vendor\Firebase\JWT;
 
 use InvalidArgumentException;
 use OpenSSLAsymmetricKey;
@@ -9,26 +15,20 @@ use TypeError;
 
 class Key
 {
-    /** @var string|resource|OpenSSLAsymmetricKey|OpenSSLCertificate */
-    private $keyMaterial;
-    /** @var string */
-    private $algorithm;
-
     /**
-     * @param string|resource|OpenSSLAsymmetricKey|OpenSSLCertificate $keyMaterial
+     * @param string|OpenSSLAsymmetricKey|OpenSSLCertificate $keyMaterial
      * @param string $algorithm
      */
     public function __construct(
-        $keyMaterial,
-        string $algorithm
+        #[\SensitiveParameter] private $keyMaterial,
+        private string $algorithm
     ) {
         if (
             !\is_string($keyMaterial)
             && !$keyMaterial instanceof OpenSSLAsymmetricKey
             && !$keyMaterial instanceof OpenSSLCertificate
-            && !\is_resource($keyMaterial)
         ) {
-            throw new TypeError('Key material must be a string, resource, or OpenSSLAsymmetricKey');
+            throw new TypeError('Key material must be a string, OpenSSLCertificate, or OpenSSLAsymmetricKey');
         }
 
         if (empty($keyMaterial)) {
@@ -38,10 +38,6 @@ class Key
         if (empty($algorithm)) {
             throw new InvalidArgumentException('Algorithm must not be empty');
         }
-
-        // TODO: Remove in PHP 8.0 in favor of class constructor property promotion
-        $this->keyMaterial = $keyMaterial;
-        $this->algorithm = $algorithm;
     }
 
     /**
@@ -55,7 +51,7 @@ class Key
     }
 
     /**
-     * @return string|resource|OpenSSLAsymmetricKey|OpenSSLCertificate
+     * @return string|OpenSSLAsymmetricKey|OpenSSLCertificate
      */
     public function getKeyMaterial()
     {

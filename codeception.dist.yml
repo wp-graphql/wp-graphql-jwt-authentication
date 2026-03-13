@@ -1,11 +1,12 @@
 paths:
-  tests: '%TESTS_DIR%'
-  output: '%TESTS_OUTPUT%'
-  data: '%TESTS_DATA%'
-  support: '%TESTS_SUPPORT%'
-  envs: '%TESTS_ENVS%'
+  tests: tests
+  output: tests/_output
+  data: tests/_data
+  support: tests/_support
+  envs: tests/_envs
 params:
   - env
+  - .env.dist
   - .env
 actor_suffix: Tester
 settings:

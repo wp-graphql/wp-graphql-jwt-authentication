@@ -5,10 +5,12 @@ $I->wantTo('Login with valid username and password and retrieve accessToken and 
 $username = uniqid();
 $user = $I->haveUserInDatabase( $username, 'administrator', [ 'user_pass' => 'password' ] );
 
+$I->haveHttpHeader('Content-Type', 'application/json');
+
 /**
  * Login with username and password
  */
-$I->sendPOST( 'http://wp.localhost/graphql', json_encode([
+$I->sendPOST( '/graphql', json_encode([
 	'query' => '
 		mutation Login($input: LoginInput!) {
 			login( input: $input ) {

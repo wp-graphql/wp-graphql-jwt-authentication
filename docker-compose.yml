@@ -1,0 +1,31 @@
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wptests
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  wordpress:
+    build:
+      context: .
+      args:
+        PHP_VERSION: ${PHP_VERSION:-8.2}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/var/www/html/wp-content/plugins/wp-graphql-jwt-authentication
+    command: bash -c "vendor/bin/codecept run ${FILTER:-}"
+    env_file: .env.dist
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: root
+      WORDPRESS_DB_PASSWORD: root
+      WORDPRESS_DB_NAME: wptests
+    ports:
+      - "${APP_PORT:-8089}:80"
