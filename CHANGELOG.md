@@ -1,5 +1,18 @@
 # Changelog
 
+## [v0.7.1](https://github.com/wp-graphql/wp-graphql-jwt-authentication/tree/v0.7.1) (2026-03-13)
+
+[Full Changelog](https://github.com/wp-graphql/wp-graphql-jwt-authentication/compare/v0.7.0...v0.7.1)
+
+**Other Changes:**
+
+- Upgrade firebase/php-jwt to v7, modernize CI [\#188](https://github.com/wp-graphql/wp-graphql-jwt-authentication/pull/188) ([kidunot89](https://github.com/kidunot89))
+- Allowing the token from validation function to be filtered [\#184](https://github.com/wp-graphql/wp-graphql-jwt-authentication/pull/184) ([davidvexel](https://github.com/davidvexel))
+- \[FIX\] \#173 - PHP 8.1 deprecation warning  [\#180](https://github.com/wp-graphql/wp-graphql-jwt-authentication/pull/180) ([gregrickaby](https://github.com/gregrickaby))
+- chore: Auth class functions return type fix. [\#176](https://github.com/wp-graphql/wp-graphql-jwt-authentication/pull/176) ([kidunot89](https://github.com/kidunot89))
+- Fixes inconsistent error messages [\#174](https://github.com/wp-graphql/wp-graphql-jwt-authentication/pull/174) ([creative-andrew](https://github.com/creative-andrew))
+- Expose auth token in response headers [\#97](https://github.com/wp-graphql/wp-graphql-jwt-authentication/pull/97) ([kellenmace](https://github.com/kellenmace))
+
 ## [v0.7.0](https://github.com/wp-graphql/wp-graphql-jwt-authentication/tree/v0.7.0) (2023-03-31)
 
 [Full Changelog](https://github.com/wp-graphql/wp-graphql-jwt-authentication/compare/v0.6.0...v0.7.0)
@@ -14,10 +27,7 @@
 - Added the action graphql\_jwt\_auth\_before\_authenticate and the filter … [\#135](https://github.com/wp-graphql/wp-graphql-jwt-authentication/pull/135) ([spiralni](https://github.com/spiralni))
 - Fix incorrect error message on invalid secret [\#126](https://github.com/wp-graphql/wp-graphql-jwt-authentication/pull/126) ([markspolakovs](https://github.com/markspolakovs))
 - fix\(response headers\): replace single header instead of overwriting them all [\#118](https://github.com/wp-graphql/wp-graphql-jwt-authentication/pull/118) ([tsmith-rv](https://github.com/tsmith-rv))
-- \#87 - Force Auth Secret to be set, else throw Exception [\#88](https://github.com/wp-graphql/wp-graphql-jwt-authentication/pull/88) ([jasonbahl](https://github.com/jasonbahl))
 - Adds Option to define if a cookie should be set on login. [\#85](https://github.com/wp-graphql/wp-graphql-jwt-authentication/pull/85) ([henrikwirth](https://github.com/henrikwirth))
-- Update php-jwt to latest version [\#84](https://github.com/wp-graphql/wp-graphql-jwt-authentication/pull/84) ([efoken](https://github.com/efoken))
-- Fix Auth Expiration time filter and add it to documentation [\#83](https://github.com/wp-graphql/wp-graphql-jwt-authentication/pull/83) ([henrikwirth](https://github.com/henrikwirth))
 
 ## [v0.6.0](https://github.com/wp-graphql/wp-graphql-jwt-authentication/tree/v0.6.0) (2022-10-25)
 
@@ -38,6 +48,13 @@
 ## [v0.4.1](https://github.com/wp-graphql/wp-graphql-jwt-authentication/tree/v0.4.1) (2020-05-04)
 
 [Full Changelog](https://github.com/wp-graphql/wp-graphql-jwt-authentication/compare/v0.4.0...v0.4.1)
+
+**Other Changes:**
+
+- Release/v0.4.1 [\#93](https://github.com/wp-graphql/wp-graphql-jwt-authentication/pull/93) ([jasonbahl](https://github.com/jasonbahl))
+- \#87 - Force Auth Secret to be set, else throw Exception [\#88](https://github.com/wp-graphql/wp-graphql-jwt-authentication/pull/88) ([jasonbahl](https://github.com/jasonbahl))
+- Update php-jwt to latest version [\#84](https://github.com/wp-graphql/wp-graphql-jwt-authentication/pull/84) ([efoken](https://github.com/efoken))
+- Fix Auth Expiration time filter and add it to documentation [\#83](https://github.com/wp-graphql/wp-graphql-jwt-authentication/pull/83) ([henrikwirth](https://github.com/henrikwirth))
 
 ## [v0.4.0](https://github.com/wp-graphql/wp-graphql-jwt-authentication/tree/v0.4.0) (2020-02-20)
 
